@@ -2,6 +2,9 @@ name: H1 Anonymous Empirical Positioning
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/h1-position.yml"
 
 permissions:
   contents: read
