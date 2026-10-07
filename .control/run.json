@@ -1,5 +1,5 @@
 {
-  "task_id": "network_n3_final_confirmation",
+  "task_id": "test3_external_holdout_final",
   "shards": [
     0,
     1,
@@ -9,5 +9,6 @@
     5,
     6,
     7
-  ]
+  ],
+  "target_package": ".control/neutral_target_package.csv"
 }
