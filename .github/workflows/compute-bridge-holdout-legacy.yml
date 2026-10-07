@@ -1,8 +1,7 @@
-name: Public Compute Bridge
+name: Transitional Test3 External Holdout
 
 on:
   workflow_dispatch:
-
   push:
     paths:
       - ".control/run.json"
@@ -11,94 +10,60 @@ permissions:
   contents: read
 
 concurrency:
-  group: public-compute-bridge
+  group: transitional-test3-external-holdout
   cancel-in-progress: false
 
 jobs:
-
   prepare:
     runs-on: ubuntu-latest
-
     outputs:
       task_id: ${{ steps.control.outputs.task_id }}
       shards: ${{ steps.control.outputs.shards }}
-
     steps:
-
-      - name: Checkout public laboratory
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           path: lab
-
-      - name: Read control file
-        id: control
-        shell: bash
+      - id: control
         run: |
           python - <<'PY'
-          import json
-          import os
-
-          path = "lab/.control/run.json"
-
-          with open(path, "r", encoding="utf-8") as f:
-              cfg = json.load(f)
-
-          task_id = cfg["task_id"]
-          shards = cfg.get("shards", [0])
-
+          import json, os
+          cfg=json.load(open("lab/.control/run.json", encoding="utf-8"))
           with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
-              out.write(f"task_id={task_id}\n")
-              out.write("shards=" + json.dumps(shards, separators=(",", ":")) + "\n")
+              out.write(f"task_id={cfg['task_id']}\n")
+              out.write("shards=" + json.dumps(cfg.get("shards", [0]), separators=(",", ":")) + "\n")
           PY
-
-
   compute:
     needs: prepare
-
     strategy:
       fail-fast: false
       max-parallel: 8
       matrix:
         shard: ${{ fromJSON(needs.prepare.outputs.shards) }}
-
     runs-on: ubuntu-latest
     timeout-minutes: 330
-
     steps:
-
-      - name: Checkout public laboratory
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           path: lab
-
-      - name: Checkout private canonical repository
+      - name: Checkout transitional private runtime
         uses: actions/checkout@v4
         with:
           repository: ALRIER/On_the_Impossibility_of_Central_Planning
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: runtime
           persist-credentials: false
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Install private runtime dependencies
-        run: |
-          python -m pip install --disable-pip-version-check \
-            -r runtime/code/requirements.txt
-
-      - name: Execute private dispatcher
-        shell: bash
+      - name: Install transitional runtime dependencies
+        run: python -m pip install --disable-pip-version-check -r runtime/code/requirements.txt
+      - name: Execute holdout shard
         run: |
           python runtime/code/public_compute_dispatcher.py \
             --control lab/.control/run.json \
             --shard "${{ matrix.shard }}" \
             --output-root lab/outputs
-
-      - name: Upload compute outputs
-        if: always()
+      - if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ needs.prepare.outputs.task_id }}-shard-${{ matrix.shard }}

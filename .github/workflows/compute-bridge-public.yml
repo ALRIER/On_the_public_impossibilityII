@@ -1,0 +1,48 @@
+name: Independent Public Compute Bridge
+
+on:
+  workflow_dispatch:
+    inputs:
+      control:
+        description: Relative control file under .control/
+        required: true
+        default: .control/public-validation.json
+  push:
+    paths:
+      - "public_bundle/**"
+      - "runtime/**"
+      - "schemas/**"
+      - ".control/public-validation.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: independent-public-compute
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate public release boundary
+        run: python tools/validate_public_release.py
+      - name: Execute public task
+        run: >-
+          python runtime/public_dispatcher.py
+          --control .control/public-validation.json
+          --shard ${{ matrix.shard }}
+          --output-root outputs
+      - name: Upload neutral receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-validation-${{ matrix.shard }}
+          path: outputs/

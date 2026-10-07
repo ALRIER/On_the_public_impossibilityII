@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "neutral_target_package_v1",
+  "type": "object",
+  "required": ["TARGET", "VALUE", "LOWER", "UPPER", "N_OBS", "PACKAGE_SHA256"],
+  "properties": {
+    "TARGET": {"type": "string", "pattern": "^[A-Z][0-9]{3}$"},
+    "VALUE": {"type": "number"},
+    "LOWER": {"type": "number"},
+    "UPPER": {"type": "number"},
+    "N_OBS": {"type": "integer", "minimum": 1},
+    "PACKAGE_SHA256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  },
+  "additionalProperties": false
+}

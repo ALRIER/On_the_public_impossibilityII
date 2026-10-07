@@ -1,0 +1,5 @@
+{
+  "task_id": "neutral_contract_validation",
+  "shards": [0],
+  "package": ".control/neutral_target_package.csv"
+}

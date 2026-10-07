@@ -1,0 +1,9 @@
+# Never commit decoded/private material to the public laboratory.
+decoded/
+private/
+raw/
+*.pem
+*.key
+*.token
+*.secret
+outputs/

@@ -1,0 +1,9 @@
+{
+  "schema": "public_runtime_manifest_v1",
+  "tasks": {
+    "neutral_contract_validation": {
+      "module": "runtime.tasks.neutral_contract",
+      "shards": [0]
+    }
+  }
+}

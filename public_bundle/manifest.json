@@ -1,0 +1,8 @@
+{
+  "schema": "public_compute_bundle_manifest_v1",
+  "bundle_revision": "unreleased",
+  "neutral": true,
+  "private_dependency": false,
+  "tasks": {},
+  "files": {}
+}
