@@ -6,9 +6,7 @@ on:
     paths:
       - ".github/workflows/hr1-diagnostic.yml"
       - "runtime/tasks/hr1_diag.py"
-      - "runtime/manifest.json"
       - "public_bundle/hr1_bundle.json"
-      - "public_bundle/manifest.json"
       - ".control/hr1.json"
 
 permissions:
