@@ -1,0 +1,48 @@
+name: HR1 Anonymous Diagnostic
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/hr1-diagnostic.yml"
+      - "runtime/tasks/hr1_diag.py"
+      - "runtime/manifest.json"
+      - "public_bundle/hr1_bundle.json"
+      - "public_bundle/manifest.json"
+      - ".control/hr1.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hr1-anonymous-diagnostic
+  cancel-in-progress: false
+
+jobs:
+  hr1:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runtime
+        run: python -m pip install --disable-pip-version-check numpy scipy
+      - name: Validate public boundary
+        run: python tools/validate_public_release.py
+      - name: Execute HR1 shard
+        run: >-
+          python runtime/public_dispatcher.py
+          --control .control/hr1.json
+          --shard ${{ matrix.shard }}
+          --output-root outputs
+      - name: Upload neutral output
+        uses: actions/upload-artifact@v4
+        with:
+          name: hr1-shard-${{ matrix.shard }}
+          path: outputs/
