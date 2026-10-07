@@ -1,0 +1,18 @@
+{
+  "task_id": "h1_position",
+  "shards": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "panel": "public_bundle/h1_country_panel.csv",
+  "bundle": "public_bundle/hr1_bundle.json",
+  "revision": "h1-r1",
+  "semantics": "neutral-descriptive-no-pass-fail"
+}
