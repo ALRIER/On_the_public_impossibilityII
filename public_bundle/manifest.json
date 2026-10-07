@@ -1,6 +1,6 @@
 {
   "schema": "public_compute_bundle_manifest_v1",
-  "bundle_revision": "hr1-r1",
+  "bundle_revision": "h1-r1",
   "neutral": true,
   "private_dependency": false,
   "tasks": {
@@ -8,11 +8,19 @@
       "shards": 80,
       "control": ".control/hr1.json",
       "runtime": "runtime/tasks/hr1_diag.py"
+    },
+    "h1_position": {
+      "shards": 9,
+      "control": ".control/h1.json",
+      "runtime": "runtime/tasks/h1_position.py"
     }
   },
   "files": {
     "public_bundle/hr1_bundle.json": "tracked",
     "runtime/tasks/hr1_diag.py": "tracked",
-    ".control/hr1.json": "tracked"
+    ".control/hr1.json": "tracked",
+    "public_bundle/h1_country_panel.csv": "tracked",
+    "runtime/tasks/h1_position.py": "tracked",
+    ".control/h1.json": "tracked"
   }
 }
