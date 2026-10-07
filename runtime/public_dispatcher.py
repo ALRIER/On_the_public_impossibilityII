@@ -4,6 +4,7 @@ import argparse
 import importlib
 import json
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -21,6 +22,7 @@ def main() -> int:
     args = parser.parse_args()
 
     control_path = args.control.resolve()
+    sys.path.insert(0, str(control_path.parent.parent))
     control = load_json(control_path)
     manifest_path = control_path.parent.parent / "runtime" / "manifest.json"
     manifest = load_json(manifest_path)
