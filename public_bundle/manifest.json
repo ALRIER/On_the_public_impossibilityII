@@ -1,8 +1,18 @@
 {
   "schema": "public_compute_bundle_manifest_v1",
-  "bundle_revision": "unreleased",
+  "bundle_revision": "hr1-r1",
   "neutral": true,
   "private_dependency": false,
-  "tasks": {},
-  "files": {}
+  "tasks": {
+    "hr1_diag": {
+      "shards": 80,
+      "control": ".control/hr1.json",
+      "runtime": "runtime/tasks/hr1_diag.py"
+    }
+  },
+  "files": {
+    "public_bundle/hr1_bundle.json": "tracked",
+    "runtime/tasks/hr1_diag.py": "tracked",
+    ".control/hr1.json": "tracked"
+  }
 }
