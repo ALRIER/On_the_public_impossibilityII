@@ -105,6 +105,12 @@
         7,
         8
       ]
+    },
+    "r23_joint": {
+      "module": "runtime.tasks.h2h3_joint",
+      "shards": [
+        0
+      ]
     }
   }
 }
