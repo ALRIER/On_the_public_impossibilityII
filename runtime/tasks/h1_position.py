@@ -7,6 +7,7 @@ import json
 import math
 import os
 import urllib.request
+import urllib.parse
 import zipfile
 from pathlib import Path
 
@@ -132,6 +133,18 @@ def _api_json(url:str):
     with urllib.request.urlopen(req,timeout=120) as r:
         return json.loads(r.read().decode())
 
+class _StripAuthOnCrossHostRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        new_req = super().redirect_request(req, fp, code, msg, headers, newurl)
+        if new_req is not None:
+            old_host = urllib.parse.urlparse(req.full_url).netloc
+            new_host = urllib.parse.urlparse(newurl).netloc
+            if old_host != new_host:
+                new_req.remove_header("Authorization")
+                new_req.remove_header("X-GitHub-Api-Version")
+                new_req.remove_header("Accept")
+        return new_req
+
 def _download(url:str)->bytes:
     req=urllib.request.Request(url,headers={
         "Authorization":f"Bearer {os.environ['GITHUB_TOKEN']}",
@@ -139,7 +152,8 @@ def _download(url:str)->bytes:
         "X-GitHub-Api-Version":"2022-11-28",
         "User-Agent":"h1-position"
     })
-    with urllib.request.urlopen(req,timeout=120) as r:
+    opener=urllib.request.build_opener(_StripAuthOnCrossHostRedirect())
+    with opener.open(req,timeout=120) as r:
         return r.read()
 
 def fetch_hr1_global(repo:str, output:Path) -> Path:
