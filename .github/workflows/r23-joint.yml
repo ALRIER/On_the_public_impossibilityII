@@ -1,0 +1,42 @@
+name: R23 Anonymous Joint Certification
+
+on:
+  push:
+    paths:
+      - ".github/workflows/r23-joint.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: r23-anonymous-joint-certification
+  cancel-in-progress: false
+
+jobs:
+  r23:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install runtime
+        run: python -m pip install --disable-pip-version-check numpy scipy
+      - name: Validate public boundary
+        run: python tools/validate_public_release.py
+      - name: Execute joint stage
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          python runtime/public_dispatcher.py
+          --control .control/r23.json
+          --shard 0
+          --output-root outputs
+      - name: Upload neutral evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: r23-joint-evidence
+          path: outputs/
