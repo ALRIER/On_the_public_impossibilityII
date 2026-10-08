@@ -1,0 +1,9 @@
+{
+  "task_id": "r23_joint",
+  "shards": [
+    0
+  ],
+  "revision": "r23-r1",
+  "panel": "public_bundle/h1_country_panel.csv",
+  "source_run": 37687986340
+}
