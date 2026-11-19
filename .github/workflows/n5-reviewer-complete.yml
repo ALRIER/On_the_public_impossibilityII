@@ -56,6 +56,12 @@ jobs:
           assert x['q2_identity_pass'] and x['q3_reference_reproduced']
           assert x['number_structures']==32 and x['original_universe']==146
           assert x['independent_universe']==36 and x['q4_universally_failed']==6
+          assert x['frozen_anchor_volatility_decomposition_rows'] == 8
+          import csv
+          with open('outputs/n5_neutral_proofs/shard_0000/o303.csv', newline='') as fh:
+              anchor_rows = list(csv.DictReader(fh))
+          assert len(anchor_rows) == 8
+          assert all(0 <= float(r['VOLATILITY_CONTRIBUTION_TO_DISTANCE_SQUARED']) <= 1 for r in anchor_rows)
           assert not x['full_reviewer_closure_ready']
           assert not x['q4_reader_numeric_complete']
           print('Public numerical proofs PASS; full science remains gated.')
