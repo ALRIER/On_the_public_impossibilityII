@@ -1,0 +1,21 @@
+{
+  "schema": "neutral_n5_bundle_manifest_v1",
+  "bundle_revision": "n5-r1",
+  "neutral": true,
+  "private_dependency": false,
+  "paths": [
+    "public_bundle/n5_v1/m001.json",
+    "public_bundle/n5_v1/r001.json",
+    "public_bundle/n5_v1/t001.json"
+  ],
+  "control": ".control/n5-proofs-r1.json",
+  "task_id": "n5_neutral_proofs",
+  "shards": [
+    0
+  ],
+  "frozen_for": [
+    "preflight_only"
+  ],
+  "scientific_status": "technical_precheck_only",
+  "permission_to_execute_expensive_tasks": false
+}
