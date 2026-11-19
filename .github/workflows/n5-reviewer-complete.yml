@@ -37,7 +37,7 @@ jobs:
         run: |
           set -euo pipefail
           python tools/validate_public_release.py
-          python -m py_compile runtime/tasks/n5_neutral_proofs.py runtime/tasks/n5_review_proofs.py runtime/tasks/n5_clearing_engine.py runtime/tasks/n5_clearing_tests.py runtime/public_dispatcher.py
+          python -m py_compile runtime/tasks/n5_neutral_proofs.py runtime/tasks/n5_review_proofs.py runtime/tasks/n5_clearing_engine.py runtime/tasks/n5_clearing_tests.py runtime/tasks/n5_clearing_pilot.py runtime/tasks/n5_n3_numeric_recovery.py runtime/public_dispatcher.py
       - name: Test genuine stock-flow ledger, identical-seed replay and no-financial-friction invariance
         run: |
           set -euo pipefail
