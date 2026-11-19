@@ -143,8 +143,13 @@ def main():
         per_anchor=np.array([np.median([r["Y"] for r in rs if r["A"]==a])
                              for a in range(8)],float)
         # Optional variation across structures only when values genuinely differ.
-        summary.append({"Q":ref["id"],"T":ref["T"][0],"LO":ref["T"][1],
-                        "HI":ref["T"][2],"N_CASES":256,"N_DISTINCT_ANCHORS":8,
+        summary.append({"Q":ref["id"],
+                        "SOURCE_T":rs[0]["T"],"SOURCE_LO":rs[0]["TLO"],
+                        "SOURCE_HI":rs[0]["THI"],
+                        "CURRENT_T":ref["T"][0],"CURRENT_LO":ref["T"][1],
+                        "CURRENT_HI":ref["T"][2],
+                        "BANDS_AGREE":int(all(r["BAND_MATCH"] for r in rs)),
+                        "N_CASES":256,"N_DISTINCT_ANCHORS":8,
                         "N_TOTAL_REPS_REFERENCED":sum(r["N"] for r in rs),
                         "PASS_CASES":0,"ACHIEVED_MEAN":float(np.mean(vals)),
                         "ACHIEVED_MEDIAN":float(np.median(vals)),
@@ -165,6 +170,7 @@ def main():
     dumpcsv(args.out/"o403.csv",detailed)
     manifest={
        "schema":"n5_neutral_original_n3_recovery_v1",
+       "source_registry_band_mismatch_count":sum(1 for row in summary if not row["BANDS_AGREE"]),
        "status":"ORIGINAL_EIGHT_N3_ZIPS_SHA256_PASS",
        "source_zip_count":len(original),
        "source_original_zip_bytes":sum(r["bytes"] for r in original),
