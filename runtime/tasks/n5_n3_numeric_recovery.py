@@ -102,6 +102,7 @@ def main():
                              "validation":seen})
     check(len(original)==8 and len({x["anchor"] for x in original})==8,
           "Incomplete N3 independent source archives")
+    print("Frozen neutral numerical triple matches:", {key:sum(v["Q"]==ref["id"] for v in rows) for key,ref in TARGETS.items()}, flush=True)
     check(len(rows)==6*256, f"Expected 1536 original failed-target rows, got {len(rows)}")
     detailed=sorted(rows,key=lambda r:(r["Q"],r["A"],r["S"]))
     # Verify exactly 8*32 cells for each target, no duplicate case/target pairs.
