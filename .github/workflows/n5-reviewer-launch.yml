@@ -1,0 +1,99 @@
+name: N5 public reviewer launch - technical preflight and matched pilot
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: Choose verified preflight, engineering pilot, or readiness audit
+        required: true
+        type: choice
+        default: preflight
+        options: [preflight, pilot, readiness]
+permissions:
+  contents: write
+concurrency:
+  group: n5-reviewer-launch-${{ inputs.phase }}
+  cancel-in-progress: false
+jobs:
+  public_stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PHASE: ${{ inputs.phase }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Verify full public independence, source, original science and invariants
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m runtime.tasks.n5_clearing_tests
+          python runtime/public_dispatcher.py \
+            --control .control/n5-proofs-r1.json \
+            --shard 0 --output-root outputs
+          python - <<'PY'
+          import json,pathlib
+          v=json.loads(pathlib.Path("outputs/n5_neutral_proofs/shard_0000/o000.json").read_text())
+          assert v["q2_identity_pass"] and v["q3_reference_reproduced"]
+          assert v["number_structures"]==32 and v["original_universe"]==146
+          assert v["independent_universe"]==36 and v["q4_universally_failed"]==6
+          assert v["q4_reader_six_network_rows"]==6 and not v["full_reviewer_closure_ready"]
+          PY
+      - name: Run safe 9-trajectory matched economic engineering pilot
+        if: ${{ inputs.phase == 'pilot' }}
+        run: |
+          python -m runtime.tasks.n5_clearing_pilot --output outputs/n5_pilot
+          python - <<'PY'
+          import json,pathlib,csv
+          p=pathlib.Path("outputs/n5_pilot")
+          v=json.loads((p/"o504.json").read_text())
+          assert v["simulation_count"]==9 and v["all_ledgers_balanced"]
+          assert v["zero_financial_friction_invariant"]
+          assert v["matched_independent_confirmation"]=="NOT_RUN"
+          assert len(list(csv.DictReader((p/"o501.csv").open())))==324
+          PY
+      - name: Create explicit honest readiness receipt
+        run: |
+          mkdir -p outputs/n5_readiness
+          python - <<'PY'
+          import json,os,pathlib,subprocess
+          v={
+            "schema":"n5_review_status_v1",
+            "phase":os.environ["PHASE"],
+            "source_commit":subprocess.check_output(["git","rev-parse","HEAD"],text=True).strip(),
+            "source_only_public":True,
+            "stock_flow_accounting_proofs":"PASS",
+            "q2_original_structural_metrics":"32_STRUCTURES_BY_6_PASS",
+            "q3_146_and_36_reference_panel_percentiles":"REPRODUCED",
+            "q4_1536_original_development_rows":"PREVIOUSLY_SHA256_VERIFIED",
+            "q1_engineering_pilot":"PASS" if os.environ["PHASE"]=="pilot" else "SEPARATE_SUCCESSFUL_PILOT_EXISTS",
+            "q1_macro_anchors_calibrated":"NOT_YET",
+            "q1_independent_confirmation":"NOT_RUN",
+            "q3_period_matched_model_timeseries":"NOT_READY",
+            "q4_historical_vs_current_target_band_changes":"3_MATERIAL_DIFFERENCES",
+            "point5":"DEFERRED",
+            "full_economic_screen_allowed":False,
+            "full_scientific_completion":False
+          }
+          pathlib.Path("outputs/n5_readiness/status.json").write_text(json.dumps(v,indent=2)+"\n")
+          print(json.dumps(v,indent=2))
+          PY
+      - name: SHA256 indexed durable public Release
+        run: |
+          set -euo pipefail
+          mkdir -p n5_receipt
+          (cd outputs && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/n5_receipt/sha256.txt")
+          sha256sum public_bundle/n5_v1/m001.json public_bundle/n5_v1/r001.json public_bundle/n5_v1/t001.json > n5_receipt/source_sha256.txt
+          cp public_bundle/n5_v1/manifest.json n5_receipt/source_manifest.json
+          git rev-parse HEAD > n5_receipt/commit.txt
+          tar -cf n5_receipt/results.tar -C outputs .
+          TAG="n5-public-review-launch-$PHASE-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" n5_receipt/results.tar n5_receipt/sha256.txt \
+            n5_receipt/source_sha256.txt n5_receipt/source_manifest.json n5_receipt/commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 public reviewer technical $PHASE" \
+            --notes "Q1 empirical calibration and independent confirmation have NOT been completed. Run is for original quantitative reviewer evidence and engineering only; no private checkout or large scientific simulations."
