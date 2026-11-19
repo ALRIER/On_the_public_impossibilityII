@@ -55,10 +55,16 @@ def main():
                 with z.open(fname) as fh:
                     val=list(csv.DictReader(io.TextIOWrapper(fh,encoding="utf-8-sig")))
                 for v in val:
-                    t=v["target_id"]
-                    if t not in SIX:continue
-                    check(t.startswith("T") and t[1:].isdigit(),
-                          "Original public target not anonymous")
+                    # Match by frozen numerical triple, not a semantic target
+                    # identifier that might occur in old source artifacts.
+                    numeric=np.array([float(v["empirical_value"]),
+                                      float(v["tolerance_lower"]),
+                                      float(v["tolerance_upper"])],float)
+                    matches=[k for k,ref in TARGETS.items()
+                             if np.allclose(numeric,ref["T"],rtol=1e-9,atol=1e-9)]
+                    if not matches:continue
+                    check(len(matches)==1,"Ambiguous frozen numeric identity")
+                    t=matches[0]
                     check(v["status"] in ("PASS","FAIL","pass","fail","True","False"),
                           "Unexpected validation status")
                     case=v["N3_CASE_ID"]
