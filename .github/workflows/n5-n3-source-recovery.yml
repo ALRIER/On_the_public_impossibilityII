@@ -1,5 +1,5 @@
 name: N5 verify and inspect original N3 public archive (no simulations)
-# Preserve original N3 numerical targets and updated current reference bands separately, no simulation.
+# Recompute historical-versus-current acceptance sensitivity; immutable original N3 data, no simulation.
 on:
   push:
     branches: [main]
