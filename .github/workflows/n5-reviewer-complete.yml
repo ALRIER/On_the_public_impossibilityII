@@ -57,6 +57,11 @@ jobs:
           assert x['number_structures']==32 and x['original_universe']==146
           assert x['independent_universe']==36 and x['q4_universally_failed']==6
           assert x['frozen_anchor_volatility_decomposition_rows'] == 8
+          assert x['q4_reader_six_network_rows'] == 6
+          with open('outputs/n5_neutral_proofs/shard_0000/o205.csv', newline='') as fh:
+              metric_rows = list(csv.DictReader(fh))
+          assert len(metric_rows) == 6
+          assert all(int(m['PASS_STRUCTURES']) == 32 for m in metric_rows)
           import csv
           with open('outputs/n5_neutral_proofs/shard_0000/o303.csv', newline='') as fh:
               anchor_rows = list(csv.DictReader(fh))
