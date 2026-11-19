@@ -1,0 +1,68 @@
+name: N5 public-only matched economic engineering pilot (no full simulation)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-public-engineering-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-economic-pilot
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - name: Checkout anonymous PUBLIC code only
+        uses: actions/checkout@v4
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Validate anonymous bundle and mathematical/accounting tests
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m runtime.tasks.n5_clearing_tests
+          python -m py_compile runtime/tasks/n5_clearing_pilot.py
+      - name: Execute frozen small matched PUBLIC pilot (not independent confirmation)
+        run: |
+          set -euo pipefail
+          python -m runtime.tasks.n5_clearing_pilot --output outputs/n5_pilot
+      - name: Check legitimate pilot scope
+        run: |
+          python - <<'PY'
+          import csv,json
+          from pathlib import Path
+          out=Path("outputs/n5_pilot")
+          s=json.loads((out/"o504.json").read_text())
+          assert s["simulation_count"]==9
+          assert s["all_ledgers_balanced"]
+          assert s["zero_financial_friction_invariant"]
+          assert s["economic_anchor_calibration_gate"]=="NOT_YET_VERIFIED"
+          assert s["matched_independent_confirmation"]=="NOT_RUN"
+          assert s["complete_reviewer_question1"]=="NOT_ESTABLISHED"
+          with (out/"o501.csv").open() as f:
+              assert len(list(csv.DictReader(f)))==9*36
+          print("Nine matched trajectories; pilot and accounting gates passed. Scientific confirmation still blocked.")
+          PY
+      - name: Save immutable scientific-source receipt in durable PUBLIC GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p n5_receipt
+          (cd outputs/n5_pilot && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/n5_receipt/sha256.txt")
+          cp public_bundle/n5_v1/manifest.json n5_receipt/manifest.json
+          sha256sum public_bundle/n5_v1/m001.json public_bundle/n5_v1/r001.json public_bundle/n5_v1/t001.json > n5_receipt/source_sha256.txt
+          git rev-parse HEAD > n5_receipt/public_commit.txt
+          tar -cf n5_receipt/pilot.tar -C outputs/n5_pilot .
+          TAG="n5-public-engineering-pilot-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" n5_receipt/pilot.tar n5_receipt/sha256.txt n5_receipt/source_sha256.txt n5_receipt/manifest.json n5_receipt/public_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 public engineering pilot - matched trial and full ledgers" \
+            --notes "Nine trial trajectories only, three network arms and three scenarios. Source hashes plus original physical/financial ledgers retained. Does NOT constitute independently validated economic effects, calibrated macro results, or Question 1 scientific closure."
