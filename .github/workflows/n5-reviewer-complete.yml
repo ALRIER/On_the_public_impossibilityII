@@ -1,0 +1,68 @@
+name: N5 independent public reviewer-closure gate (preflight only)
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        description: Explicit, cost-free preflight only until scientific gates pass
+        required: true
+        type: choice
+        default: preflight
+        options:
+          - preflight
+permissions:
+  contents: write
+concurrency:
+  group: n5-reviewer-public-preflight
+  cancel-in-progress: false
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout public repository only
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical runtime
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Public-data leak scan and numerical syntax
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_neutral_proofs.py runtime/tasks/n5_review_proofs.py runtime/public_dispatcher.py
+      - name: Run registered standalone N5 numerical proof task
+        run: |
+          set -euo pipefail
+          python runtime/public_dispatcher.py --control .control/n5-proofs-r1.json --shard 0 --output-root outputs
+      - name: Ensure exact frozen inputs and no false scientific completion declaration
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('outputs/n5_neutral_proofs/shard_0000/o000.json')
+          x=json.loads(p.read_text())
+          assert x['q2_identity_pass'] and x['q3_reference_reproduced']
+          assert x['number_structures']==32 and x['original_universe']==146
+          assert x['independent_universe']==36 and x['q4_universally_failed']==6
+          assert not x['full_reviewer_closure_ready']
+          assert not x['q4_reader_numeric_complete']
+          print('Public numerical proofs PASS; full science remains gated.')
+          PY
+      - name: Durable public Release of original numerical proof outputs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="n5-public-preflight-r1-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          mkdir -p "n5_archive"
+          cp public_bundle/n5_v1/manifest.json n5_archive/neutral_bundle_manifest.json
+          (cd outputs/n5_neutral_proofs/shard_0000 && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/n5_archive/sha256_checksums.txt")
+          tar -cf n5_archive/neutral_proofs.tar -C outputs/n5_neutral_proofs/shard_0000 .
+          gh release create "$TAG" n5_archive/neutral_proofs.tar n5_archive/neutral_bundle_manifest.json n5_archive/sha256_checksums.txt \
+            --title "N5 numerical-only proof receipt (preflight)" \
+            --notes "Read-only anonymous numerical identity checks, country-domain sensitivity, and frozen target registers. Not approval for economic-simulator execution, confirmation, or claims of review resolution." \
+            --repo "$GITHUB_REPOSITORY"
