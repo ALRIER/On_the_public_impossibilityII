@@ -1,0 +1,53 @@
+name: N5 financial/material clearing engineering pilot — public only (manual)
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        required: true
+        default: pilot
+        options:
+          - pilot
+        description: Nine paired engineering test trajectories; no confirm or full screen
+permissions:
+  contents: write
+concurrency:
+  group: n5-coupled-manual-pilot
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install anonymous numerical runtime only
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Mandatory public privacy boundary and stock-flow unit tests
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_clearing_pilot.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Execute only the bounded nine-case prospective engineering pilot
+        run: |
+          set -euo pipefail
+          python -m runtime.tasks.n5_clearing_pilot --output outputs/n5_public_engineering_pilot
+      - name: Publish immutable public provenance and full balanced ledger originals
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          (cd outputs/n5_public_engineering_pilot && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/archive/original_sha256.txt")
+          tar -czf archive/n5_pilot_ledger_originals.tar.gz -C outputs/n5_public_engineering_pilot .
+          cp outputs/n5_public_engineering_pilot/o504.json archive/pilot_receipt.json
+          TAG="n5-public-ledger-pilot-r1-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" archive/n5_pilot_ledger_originals.tar.gz archive/pilot_receipt.json archive/original_sha256.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 manual neutral pilot with original physical/financial ledgers" \
+            --notes "New experimental model variant, 9 bounded engineering cases and balance tests ONLY. NOT independently confirmed, NOT suitable for positive/negative reviewer conclusions."
