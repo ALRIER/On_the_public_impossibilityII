@@ -111,6 +111,12 @@
       "shards": [
         0
       ]
+    },
+    "n5_neutral_proofs": {
+      "module": "runtime.tasks.n5_neutral_proofs",
+      "shards": [
+        0
+      ]
     }
   }
 }
