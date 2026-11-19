@@ -198,8 +198,28 @@ def network_proofs(m,t):
     # here P does not depend on anchor. Never pseudo-replicate 256 metric draws.
     ensure(len(rows)==192 and len(perstructure)==32,"Expected structural panel incomplete")
     write("o201.csv",rows);write("o202.csv",compare)
+    panel=np.array(perstructure,float)
+    structural=[]
+    for i,reference in enumerate(targets):
+        v=panel[:,i]
+        structural.append({
+            "C":reference["id"],"EMPIRICAL":reference["T"][0],
+            "LOW":reference["T"][1],"HIGH":reference["T"][2],
+            "ACHIEVED_MEAN":float(np.mean(v)),
+            "ACHIEVED_MEDIAN":float(np.median(v)),
+            "ACHIEVED_Q25":float(np.quantile(v,.25)),
+            "ACHIEVED_Q75":float(np.quantile(v,.75)),
+            "ACHIEVED_MIN":float(np.min(v)),
+            "ACHIEVED_MAX":float(np.max(v)),
+            "PASS_STRUCTURES":int(sum((v>=reference["T"][1])&
+                                      (v<=reference["T"][2]))),
+            "N_DISTINCT_STRUCTURES":len(v),
+            "N_CROSS_PRODUCT_COMBINATIONS":len(v)*8,
+            "SHARED_STRUCTURAL_MEASURE_ACROSS_8_ANCHORS":1
+        })
+    write("o205.csv",structural)
     return {"q2_identity_pass":True,"original_network_reproduced":True,
-            "number_structures":32,"network_metrics_measured":192,
+            "number_structures":32,"network_metrics_measured":192,"q4_reader_six_network_rows":len(structural),
             "metric_passes":sum(x["IN_BAND"] for x in rows),
             "metric_total":len(rows),"simple_density_matched_count":
             sum(x["MATCHABLE"] for x in compare)}
