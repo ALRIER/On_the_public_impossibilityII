@@ -1,5 +1,9 @@
 name: N5 independent public reviewer-closure gate (preflight only)
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-reviewer-complete.yml'
   workflow_dispatch:
     inputs:
       phase:
