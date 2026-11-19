@@ -33,7 +33,7 @@ def main():
     chosen=[r for r in mf if r["name"].startswith("network_n3_final_confirmation-shard-")]
     check(len(chosen)==8,"Expected eight N3 original source ZIPs")
     byfile={r["filename"]:r for r in chosen}
-    original=[];rows=[];case_index={}
+    original=[];rows=[];case_index={}; raw_empirical=set()
     with tarfile.open(args.tar) as archive:
         for member in archive:
             if member.name not in byfile:continue
@@ -55,6 +55,8 @@ def main():
                 with z.open(fname) as fh:
                     val=list(csv.DictReader(io.TextIOWrapper(fh,encoding="utf-8-sig")))
                 for v in val:
+                    try:raw_empirical.add(float(v["empirical_value"]))
+                    except (ValueError,TypeError):pass
                     # Match by frozen numerical triple, not a semantic target
                     # identifier that might occur in old source artifacts.
                     numeric=np.array([float(v["empirical_value"]),
@@ -103,6 +105,11 @@ def main():
     check(len(original)==8 and len({x["anchor"] for x in original})==8,
           "Incomplete N3 independent source archives")
     print("Frozen neutral numerical triple matches:", {key:sum(v["Q"]==ref["id"] for v in rows) for key,ref in TARGETS.items()}, flush=True)
+    for key,ref in TARGETS.items():
+        if any(v["Q"]==ref["id"] for v in rows):continue
+        x=ref["T"][0]
+        print("Unmatched neutral numeric reference",key,x,
+              sorted(raw_empirical,key=lambda n:abs(n-x))[:7],flush=True)
     check(len(rows)==6*256, f"Expected 1536 original failed-target rows, got {len(rows)}")
     detailed=sorted(rows,key=lambda r:(r["Q"],r["A"],r["S"]))
     # Verify exactly 8*32 cells for each target, no duplicate case/target pairs.
