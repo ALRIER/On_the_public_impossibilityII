@@ -50,7 +50,7 @@ jobs:
         run: |
           set -euo pipefail
           python - <<'PY'
-          import json,pathlib
+          import json,pathlib,csv
           p=pathlib.Path('outputs/n5_neutral_proofs/shard_0000/o000.json')
           x=json.loads(p.read_text())
           assert x['q2_identity_pass'] and x['q3_reference_reproduced']
@@ -62,7 +62,6 @@ jobs:
               metric_rows = list(csv.DictReader(fh))
           assert len(metric_rows) == 6
           assert all(int(m['PASS_STRUCTURES']) == 32 for m in metric_rows)
-          import csv
           with open('outputs/n5_neutral_proofs/shard_0000/o303.csv', newline='') as fh:
               anchor_rows = list(csv.DictReader(fh))
           assert len(anchor_rows) == 8
