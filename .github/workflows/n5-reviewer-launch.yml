@@ -1,5 +1,9 @@
 name: N5 public reviewer launch - technical preflight and matched pilot
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-reviewer-launch.yml'
   workflow_dispatch:
     inputs:
       phase:
@@ -11,14 +15,14 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: n5-reviewer-launch-${{ inputs.phase }}
+  group: n5-reviewer-launch-${{ inputs.phase || 'preflight' }}
   cancel-in-progress: false
 jobs:
   public_stage:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     env:
-      PHASE: ${{ inputs.phase }}
+      PHASE: ${{ inputs.phase || 'preflight' }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
