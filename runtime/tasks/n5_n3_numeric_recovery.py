@@ -99,6 +99,18 @@ def main():
                     # Both point-to-band and model-interval-to-band gaps:
                     gap=(point-upper if point>upper else point-lower if point<lower else 0)
                     interval_gap=(lo-upper if lo>upper else hi-lower if hi<lower else 0)
+                    current_lo,current_hi=ref["T"][1:]
+                    current_point_gap=(point-current_hi if point>current_hi
+                                       else point-current_lo if point<current_lo else 0)
+                    current_interval_gap=(lo-current_hi if lo>current_hi
+                                          else hi-current_lo if hi<current_lo else 0)
+                    rule=str(v["acceptance_rule"]).lower()
+                    if "interval" in rule and "overlap" in rule:
+                        current_pass=int(lo<=current_hi and hi>=current_lo)
+                    elif "point" in rule and "within" in rule:
+                        current_pass=int(current_lo<=point<=current_hi)
+                    else:
+                        raise RuntimeError("Cannot certify unrecognized original acceptance rule")
                     width=max((upper-lower)/2,1e-12)
                     rows.append({"Q":ref["id"],"A":anchor,"S":k,
                                  "Y":point,"YLO":lo,"YHI":hi,
@@ -109,6 +121,9 @@ def main():
                                  "POINT_SIGNED_OUTSIDE":gap,
                                  "INTERVAL_SIGNED_OUTSIDE":interval_gap,
                                  "NORMALIZED_POINT_GAP":gap/width,
+                                 "CURRENT_POINT_GAP":current_point_gap,
+                                 "CURRENT_INTERVAL_GAP":current_interval_gap,
+                                 "CURRENT_PASS":current_pass,
                                  "NORMALIZED_INTERVAL_GAP":interval_gap/width,
                                  "PASS":int(v["status"] in ("PASS","pass","True")),
                                  "N":int(v["model_replicates"])})
@@ -151,7 +166,9 @@ def main():
                         "BANDS_AGREE":int(all(r["BAND_MATCH"] for r in rs)),
                         "N_CASES":256,"N_DISTINCT_ANCHORS":8,
                         "N_TOTAL_REPS_REFERENCED":sum(r["N"] for r in rs),
-                        "PASS_CASES":0,"ACHIEVED_MEAN":float(np.mean(vals)),
+                        "PASS_CASES":0,
+                        "CURRENT_BAND_PASS_CASES":sum(r["CURRENT_PASS"] for r in rs),
+                        "ACHIEVED_MEAN":float(np.mean(vals)),
                         "ACHIEVED_MEDIAN":float(np.median(vals)),
                         "ACHIEVED_P25":float(np.quantile(vals,.25)),
                         "ACHIEVED_P75":float(np.quantile(vals,.75)),
@@ -171,6 +188,7 @@ def main():
     manifest={
        "schema":"n5_neutral_original_n3_recovery_v1",
        "source_registry_band_mismatch_count":sum(1 for row in summary if not row["BANDS_AGREE"]),
+       "current_band_pass_counts":{row["Q"]:row["CURRENT_BAND_PASS_CASES"] for row in summary},
        "status":"ORIGINAL_EIGHT_N3_ZIPS_SHA256_PASS",
        "source_zip_count":len(original),
        "source_original_zip_bytes":sum(r["bytes"] for r in original),
