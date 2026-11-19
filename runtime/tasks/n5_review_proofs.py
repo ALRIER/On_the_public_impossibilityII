@@ -287,6 +287,25 @@ def position_proofs(bundle):
         rows.append({"V":ix,"W1":1/3,"W2":1/3,"W3":1/3,
                      "K":"mahal","D":v[0],"SUPPORT":v[1],"NEAR":v[2]})
     write("o301.csv",rows)
+    # Factor-specific decomposition: volatility separation must not be
+    # misreported as an independent three-dimensional country-domain result.
+    decomposed=[]
+    for i,p in enumerate(bundle["V001"]):
+        original=percent(p,X,med,scale,"l2",(1/3,1/3,1/3))
+        remove_volatility=percent(p,X,med,scale,"l2",(.5,0,.5))
+        double_volatility=percent(p,X,med,scale,"l2",(.2,.6,.2))
+        nearest=original[2]
+        components=((np.asarray(p,float)-X[nearest])/scale)**2
+        frac=float(components[1]/max(float(components.sum()),1e-12))
+        decomposed.append({
+          "V":i,"ORIGINAL_GROUP":"R1" if i in (0,1,7) else "R2",
+          "ORIGINAL_SUPPORT":original[1],
+          "ZERO_V_EXPOSURE_SUPPORT":remove_volatility[1],
+          "DOUBLE_V_EXPOSURE_SUPPORT":double_volatility[1],
+          "ORIGINAL_NEAREST_INDEX":nearest,
+          "VOLATILITY_CONTRIBUTION_TO_DISTANCE_SQUARED":frac,
+          "ROBUST_DISTANCE":original[0]})
+    write("o303.csv",decomposed)
     windows=[
         ("W1",set(range(1995,2005))),
         ("W2",set(range(2005,2015))),
@@ -309,6 +328,7 @@ def position_proofs(bundle):
             "original_universe":146,"independent_universe":36,
             "support_original":low[1],"support_independent":other[1],
             "weight_distance_rows":len(rows),
+            "frozen_anchor_volatility_decomposition_rows":len(decomposed),
             "subperiod_reference_coverage_prepared":len(cover),
             "subperiod_model_matched":False}
 
