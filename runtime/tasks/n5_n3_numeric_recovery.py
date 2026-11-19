@@ -12,6 +12,7 @@ ROOT=Path(__file__).resolve().parents[2]
 FROZEN=json.loads((ROOT/"public_bundle/n5_v1/t001.json").read_text())
 TARGETS={r["L"]:r for r in FROZEN["M202"]}
 SIX=set(TARGETS)
+BY_HASH={r["H"]:r["L"] for r in FROZEN["M202"]}
 
 def check(value,message):
     if not value:raise RuntimeError(message)
@@ -62,11 +63,18 @@ def main():
                     numeric=np.array([float(v["empirical_value"]),
                                       float(v["tolerance_lower"]),
                                       float(v["tolerance_upper"])],float)
-                    matches=[k for k,ref in TARGETS.items()
-                             if np.allclose(numeric,ref["T"],rtol=1e-9,atol=1e-9)]
-                    if not matches:continue
-                    check(len(matches)==1,"Ambiguous frozen numeric identity")
-                    t=matches[0]
+                    rawid=v["target_id"].strip()
+                    original_hash=hashlib.sha256(rawid.encode("utf-8")).hexdigest()
+                    if rawid in TARGETS:
+                        t=rawid
+                    elif original_hash in BY_HASH:
+                        t=BY_HASH[original_hash]
+                    else:
+                        matches=[k for k,ref in TARGETS.items()
+                                 if np.allclose(numeric,ref["T"],rtol=1e-9,atol=1e-9)]
+                        if not matches:continue
+                        check(len(matches)==1,"Ambiguous frozen numeric identity")
+                        t=matches[0]
                     check(v["status"] in ("PASS","FAIL","pass","fail","True","False"),
                           "Unexpected validation status")
                     case=v["N3_CASE_ID"]
@@ -83,8 +91,11 @@ def main():
                     upper=float(v["tolerance_upper"])
                     check(np.all(np.isfinite([point,lo,hi,e,lower,upper])),
                           "Nonfinite original numeric verification")
-                    check(np.allclose([e,lower,upper],ref["T"],rtol=1e-9,atol=1e-9),
-                          "Original frozen target numerical mismatch "+t)
+                    band_equal=bool(np.allclose([e,lower,upper],ref["T"],
+                                             rtol=1e-9,atol=1e-9))
+                    # Original-run acceptance bands take precedence for original
+                    # historical pass/fail. Preserve any later-registry mismatch
+                    # explicitly; never force source values into a later target.
                     # Both point-to-band and model-interval-to-band gaps:
                     gap=(point-upper if point>upper else point-lower if point<lower else 0)
                     interval_gap=(lo-upper if lo>upper else hi-lower if hi<lower else 0)
@@ -92,6 +103,9 @@ def main():
                     rows.append({"Q":ref["id"],"A":anchor,"S":k,
                                  "Y":point,"YLO":lo,"YHI":hi,
                                  "T":e,"TLO":lower,"THI":upper,
+                                 "FROZEN_T":ref["T"][0],"FROZEN_LO":ref["T"][1],
+                                 "FROZEN_HI":ref["T"][2],
+                                 "BAND_MATCH":int(band_equal),
                                  "POINT_SIGNED_OUTSIDE":gap,
                                  "INTERVAL_SIGNED_OUTSIDE":interval_gap,
                                  "NORMALIZED_POINT_GAP":gap/width,
@@ -144,6 +158,7 @@ def main():
                         "MEAN_NORM_SIGNED_GAP":float(np.mean(gap)),
                         "MEDIAN_NORM_ABS_GAP":float(np.median(np.abs(gap))),
                         "MEAN_NORM_INTERVAL_SIGNED_GAP":float(np.mean(igap)),
+                        "N_SOURCE_BAND_MATCH":sum(r["BAND_MATCH"] for r in rs),
                         "MODE":"ORIGINAL_VALIDATION_INTERVALS_NOT_INDEPENDENT_STRUCTURES"})
     args.out.mkdir(parents=True,exist_ok=True)
     dumpcsv(args.out/"o402.csv",summary)
