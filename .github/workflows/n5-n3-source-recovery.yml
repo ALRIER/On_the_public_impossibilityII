@@ -1,0 +1,47 @@
+name: N5 verify and inspect original N3 public archive (no simulations)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-n3-source-recovery.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-n3-source-readonly
+  cancel-in-progress: false
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Public boundary and local restoration code verification
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile tools/n5_archive_probe.py
+      - name: Download original public archive bytes, verify source SHA256 and list original files
+        run: |
+          set -euo pipefail
+          mkdir -p recovered
+          gh release download "raw-actions-backup-2026-11-17" --repo "$GITHUB_REPOSITORY" \
+            --pattern "raw_bundle_010.tar" --dir recovered
+          gh release download "raw-actions-backup-2026-11-17" --repo "$GITHUB_REPOSITORY" \
+            --pattern "original_artifact_manifest.csv" --dir recovered
+          python tools/n5_archive_probe.py \
+            --tar recovered/raw_bundle_010.tar \
+            --manifest recovered/original_artifact_manifest.csv \
+            --out recovered/n3_source_probe.json
+      - name: Publish durable original-source verification receipt without original private data
+        run: |
+          set -euo pipefail
+          TAG="n5-n3-public-source-probe-r1-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" recovered/n3_source_probe.json --repo "$GITHUB_REPOSITORY" \
+            --title "Verified archived original N3 neutral source inventory" \
+            --notes "Read-only list of eight original source artifact ZIP hashes, internal filenames and header layouts. No N3 simulator rerun."
