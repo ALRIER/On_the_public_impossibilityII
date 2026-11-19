@@ -1,5 +1,5 @@
 name: N5 verify and inspect original N3 public archive (no simulations)
-# Re-run anonymous SHA-matched original target identity reconciliation without simulations.
+# Preserve original N3 numerical targets and updated current reference bands separately, no simulation.
 on:
   push:
     branches: [main]
