@@ -1,5 +1,5 @@
 name: N5 verify and inspect original N3 public archive (no simulations)
-# Re-run source-only neutral original source target coverage diagnostic without simulations.
+# Re-run numerical target vintage diagnostic without any new simulation.
 on:
   push:
     branches: [main]
