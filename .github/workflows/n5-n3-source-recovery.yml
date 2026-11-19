@@ -1,5 +1,5 @@
 name: N5 verify and inspect original N3 public archive (no simulations)
-# Re-run numerical target vintage diagnostic without any new simulation.
+# Re-run anonymous SHA-matched original target identity reconciliation without simulations.
 on:
   push:
     branches: [main]
