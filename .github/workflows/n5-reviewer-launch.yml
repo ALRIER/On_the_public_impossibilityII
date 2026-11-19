@@ -47,6 +47,18 @@ jobs:
           assert v["independent_universe"]==36 and v["q4_universally_failed"]==6
           assert v["q4_reader_six_network_rows"]==6 and not v["full_reviewer_closure_ready"]
           PY
+      - name: Reconcile exact frozen screening and fresh confirmation design, without running it
+        run: |
+          set -euo pipefail
+          python runtime/tasks/n5_future_stage_plan.py --out-dir outputs/n5_plan
+          python - <<'PY'
+          import json,pathlib
+          p=json.loads(pathlib.Path("outputs/n5_plan/o602.json").read_text())
+          assert p["total_prospective_trajectories"]==26624
+          assert p["seed_family_overlap"]==0
+          assert p["confirm_design"]["shards"]==8 and p["screen_design"]["shards"]==32
+          assert not p["scientific_experiment_ready"]
+          PY
       - name: Run safe 9-trajectory matched economic engineering pilot
         if: ${{ inputs.phase == 'pilot' }}
         run: |
