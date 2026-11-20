@@ -1,0 +1,82 @@
+name: N5 original-anchor linkage and macro readiness gate (public, no full simulations)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-anchor-calibration-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-anchor-calibration-gate
+  cancel-in-progress: false
+jobs:
+  anchor_gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout independent public neutral evidence
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical dependency set
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Verify neutral boundary, code syntax and ledger identities
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_anchor_gate.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Reproduce frozen original numerical preflight
+        run: |
+          set -euo pipefail
+          python runtime/public_dispatcher.py --control .control/n5-proofs-r1.json --shard 0 --output-root outputs
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('outputs/n5_neutral_proofs/shard_0000/o000.json')
+          j=json.loads(p.read_text())
+          assert j['q2_identity_pass'] and j['q3_reference_reproduced']
+          assert not j['full_reviewer_closure_ready']
+          PY
+      - name: Register frozen prospective workload but execute no large experiments
+        run: |
+          set -euo pipefail
+          python runtime/tasks/n5_future_stage_plan.py --out-dir outputs/n5_plan
+          python -m runtime.tasks.n5_anchor_gate --out-dir outputs/n5_anchor_gate
+      - name: Fail closed if the calibrated-model and independent-confirmation blockers are not disclosed
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import csv,json
+          p=Path('outputs/n5_anchor_gate')
+          status=json.loads((p/'anchor_gate_status.json').read_text())
+          rows=list(csv.DictReader((p/'anchor_reference_inventory.csv').open()))
+          gates=list(csv.DictReader((p/'gate_matrix.csv').open()))
+          assert len(rows)==8 and len(gates)==9
+          assert sum(r['STATUS']=='BLOCKED' for r in gates)==6
+          assert status['scientific_simulation_count']==0
+          assert status['original_fresh_reference_economies']==146
+          assert status['separate_independent_provider_economies']==36
+          assert not status['eight_anchor_bridge_independently_certified']
+          assert not status['full_scientific_execution_allowed']
+          assert not status['n5_scientifically_complete']
+          print('N5 anchor readiness evidence archived; independent calibration remains BLOCKED.')
+          PY
+      - name: Persist original neutral gate evidence in immutable public Release
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          (cd outputs && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/archive/sha256_outputs.txt")
+          sha256sum public_bundle/n5_v1/m001.json public_bundle/n5_v1/r001.json public_bundle/n5_v1/t001.json public_bundle/n5_v1/manifest.json > archive/sha256_sources.txt
+          git rev-parse HEAD > archive/public_source_commit.txt
+          tar -cf archive/neutral_anchor_gate_outputs.tar -C outputs .
+          TAG="n5-anchor-gate-r1-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" archive/neutral_anchor_gate_outputs.tar archive/sha256_outputs.txt archive/sha256_sources.txt archive/public_source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" --title "N5 public original-anchor linkage and macro readiness gate" \
+            --notes "Original eight economic anchors and independent reference universes audited. No complete anchor-to-model calibration, no matched annual model series, no new screen or confirmation. This is a prerequisite inventory, not N5 scientific closure."
