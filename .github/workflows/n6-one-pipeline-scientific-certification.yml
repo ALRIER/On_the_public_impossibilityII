@@ -1,0 +1,84 @@
+name: N6-2 SINGLE PIPELINE - scientific new-coupling certification YES or NO
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n6-one-pipeline-scientific-certification.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n6-2-public-scientific-single-decision
+  cancel-in-progress: false
+jobs:
+  one_decision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install bounded reproducible numerical tools
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Check public boundary and original legacy numerical regressions
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n6_single_pipeline_certification.py runtime/tasks/n6_coupling_compatibility_gate.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Same-run 72 no-shock baselines, double-entry and 8 frozen-anchor metadata
+        run: |
+          python -m runtime.tasks.n6_coupling_compatibility_gate \
+            --out-dir outputs/n6_one_pipeline_certification/compatibility
+      - name: Adjudicate ALL gates together with rigorous missing-proof equals NO
+        run: |
+          python -m runtime.tasks.n6_single_pipeline_certification \
+            --out-dir outputs/n6_one_pipeline_certification \
+            --compatibility-dir outputs/n6_one_pipeline_certification/compatibility
+          cat outputs/n6_one_pipeline_certification/CERTIFICATION_REPORT.md
+      - name: Release COMPLETE source-hashed input/output evidence regardless of YES or NO
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          sha256sum runtime/tasks/n5_clearing_engine.py runtime/tasks/n6_coupling_compatibility_gate.py \
+            runtime/tasks/n6_single_pipeline_certification.py public_bundle/n5_v1/m001.json \
+            public_bundle/n5_v1/t001.json public_bundle/n5_v1/r001.json > archive/source_sha256.txt
+          find outputs/n6_one_pipeline_certification -type f -print0 | sort -z | xargs -0 -r sha256sum > archive/output_sha256.txt
+          git rev-parse HEAD > archive/source_commit.txt
+          tar -czf archive/n6_one_pipeline_certification.tar.gz -C outputs n6_one_pipeline_certification
+          tag="n6-public-one-pipeline-certification-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" archive/n6_one_pipeline_certification.tar.gz \
+            archive/source_sha256.txt archive/output_sha256.txt archive/source_commit.txt \
+            outputs/n6_one_pipeline_certification/CERTIFICATION_VERDICT.json \
+            outputs/n6_one_pipeline_certification/CERTIFICATION_REPORT.md \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N6-2 single pipeline certified scientific YES/NO decision" \
+            --notes "This is a scientific yes/no GATE, not proof that the old certified Test3 is invalid. All no-shock cases and eight original reference hashes retained; a NO is deliberately a red workflow, yet exact outputs remain in this immutable Release."
+      - name: Exact-byte archive original release inside same public workflow
+        run: |
+          python tools/n6_certification_one_pipeline_export.py
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c n6-single-certification-original-evidence-20261120
+          git add staging/n6_one_pipeline_certification_20261120/archive_bytes.b64 \
+            staging/n6_one_pipeline_certification_20261120/manifest.json \
+            staging/n6_one_pipeline_certification_20261120/CERTIFICATION_VERDICT.json
+          git commit -m 'N6 immutable scientific YES/NO verdict and original release assets [skip ci]'
+          git push --set-upstream origin n6-single-certification-original-evidence-20261120
+      - name: Final scientific enforcement - NO is a RED workflow
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          s=json.loads(Path('outputs/n6_one_pipeline_certification/CERTIFICATION_VERDICT.json').read_text())
+          print('FINAL SCIENTIFIC CERTIFICATION:',s['scientific_decision'])
+          print('BLOCKERS:', json.dumps(s['blocking_conditions'],indent=2))
+          assert s['certified'] is True and s['scientific_decision']=='YES', \
+              'N6-2 NEW COUPLING SCIENTIFIC CERTIFICATION = NO. Original Test3 remains certified; see immutable Release for blockers.'
+          PY
