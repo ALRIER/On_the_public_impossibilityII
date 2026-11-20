@@ -29,6 +29,7 @@ jobs:
         run: |
           python tools/validate_public_release.py
           python -m runtime.tasks.n5_clearing_tests
+          python -m py_compile runtime/tasks/n5_ml_abm_discovery_wave.py
       - name: Fit 3 group-disjoint ML models and validate original-band network proposals with matched ABM
         run: python -m runtime.tasks.n5_ml_abm_discovery_wave
       - name: Fail closed on omissions, altered targets, leakage, and false scientific claims
