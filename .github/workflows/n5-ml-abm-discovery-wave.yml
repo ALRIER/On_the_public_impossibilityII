@@ -1,0 +1,69 @@
+name: N5 ML-guided network structural discovery and matched ABM pilot (public-only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-ml-abm-discovery-wave.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-ml-structural-discovery
+  cancel-in-progress: false
+jobs:
+  exploratory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install ML and numerical dependencies in isolated public worker
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2' 'scikit-learn>=1.5,<2' 'xgboost>=2.1,<4' 'catboost>=1.2,<2'
+      - name: Validate public-neutral boundary and unchanged stock-flow baseline
+        run: |
+          python tools/validate_public_release.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Fit 3 group-disjoint ML models and validate original-band network proposals with matched ABM
+        run: python -m runtime.tasks.n5_ml_abm_discovery_wave
+      - name: Fail closed on omissions, altered targets, leakage, and false scientific claims
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('outputs/n5_ml_abm_discovery_wave/status.json').read_text())
+          assert r['original_physical_104x104_A_unchanged']
+          assert r['original_Q2_six_target_bands_unchanged']
+          assert r['original_frozen_32_all_q2_bands_pass']
+          assert r['training_parent_groups']==24 and r['sealed_parent_groups']==8
+          assert len(r['surrogate_models'])==3 and r['sealed_group_holdout_candidates']==64
+          assert r['new_prospectively_ABM_blind_acquired']==56
+          assert r['new_acquired_passing_all_six_original_bands']>=2
+          assert r['ABM_matched_trajectories']==32 and r['ABM_paired_contrasts']==12
+          assert r['ABM_max_conservation_residual']<1e-9
+          assert r['ABM_no_financial_friction_placebo_pass']
+          assert r['selected_by_economic_outcome'] is False
+          assert r['original_eight_legacy_anchor_adapter_certified'] is False
+          assert r['Q1_beneficial_economic_claim_supported'] is False
+          assert r['Q4_historical_development_failure_changed'] is False
+          assert r['large_scale_economic_ML_training_authorized'] is False
+          print('N5 exploratory ML -> ABM gate passed; original anchor parity remains BLOCKED.')
+          PY
+      - name: Preserve complete candidate, holdout, ABM and source-hash evidence as immutable public Release
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          sha256sum runtime/tasks/n5_ml_abm_discovery_wave.py runtime/tasks/n5_clearing_engine.py runtime/tasks/n5_review_proofs.py public_bundle/n5_v1/m001.json public_bundle/n5_v1/t001.json > archive/source_sha256.txt
+          (find outputs/n5_ml_abm_discovery_wave -type f -print0 2>/dev/null || true) | sort -z | xargs -0 -r sha256sum > archive/output_sha256.txt
+          git rev-parse HEAD > archive/source_commit.txt
+          tar -czf archive/n5_ml_abm_discovery_wave.tar.gz -C outputs .
+          tag="n5-public-ml-abm-discovery-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" archive/n5_ml_abm_discovery_wave.tar.gz archive/source_sha256.txt archive/output_sha256.txt archive/source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" --title "N5 ML network discovery with sealed structural groups and finite ABM engineering pilot" \
+            --notes "Full 256 candidate records, sealed 8 network-parent holdout, RF XGB CatBoost comparison vs naive, 56 active candidates, six unchanged Q2 bands, all matched network ABM results including null/adverse. Economic anchor parity and Q1/Q4 scientific closure NOT certified. No private Actions."
