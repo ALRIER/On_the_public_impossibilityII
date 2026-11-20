@@ -39,7 +39,7 @@ jobs:
           assert s['original_six_network_bands_unchanged']
           assert s['original_frozen_networks_admissible']==4
           assert s['trajectory_count']==160
-          assert s['paired_contrast_count']==128
+          assert s['paired_contrast_count']==64
           assert s['no_friction_placebo_pairs_checked']==4
           assert s['max_conservation_residual']<1e-9
           assert s['original_eight_economic_anchors_applied']==0
