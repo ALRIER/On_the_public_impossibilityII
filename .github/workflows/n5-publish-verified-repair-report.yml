@@ -28,8 +28,8 @@ jobs:
           echo "7cfb88695647ed96b699b71062aad5776c03246e02e3ec948efa74e4d5309d07  downloads/delivery/neutral_delivery_channel.tar.gz" | sha256sum -c -
           tar -xzf downloads/forward/neutral_forward_coverage_outputs.tar.gz -C staging_n5/forward
           tar -xzf downloads/delivery/neutral_delivery_channel.tar.gz -C staging_n5/delivery
-          (cd staging_n5/forward && sed 's#^outputs/#./#' ../../downloads/forward/output_sha256.txt | sha256sum -c -)
-          (cd staging_n5/delivery && sed 's#^outputs/#./#' ../../downloads/delivery/sha256_outputs.txt | sha256sum -c -)
+          (cd staging_n5/forward && sed 's#  outputs/#  ./#' ../../downloads/forward/output_sha256.txt | sha256sum -c -)
+          (cd staging_n5/delivery && sed 's#  outputs/#  ./#' ../../downloads/delivery/sha256_outputs.txt | sha256sum -c -)
       - name: Produce source-verified original-structure comparisons (no simulations)
         run: python tools/n5_verified_diagnostic_report.py
       - name: Commit plain-text evidence summary to public repository
