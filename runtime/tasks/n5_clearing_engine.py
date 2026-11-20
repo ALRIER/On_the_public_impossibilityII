@@ -87,7 +87,7 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         inventory_months=2.0,credit_fraction=1.2,
         wage_fraction=.22,investment_fraction=0.0,
         labor_speed=.25,full_ledger=False,
-        order_policy="legacy_stock_only"):
+        order_policy="legacy_stock_only",shock_channel="capacity"):
     A=np.asarray(A,float)
     P=np.asarray(P,float)
     n=len(A)
@@ -95,6 +95,7 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
           "Nonconforming financial matrix")
     check(mode in ("base","zero_frictions"),"Unknown immutable financial regime")
     check(hop_policy in ("direct","two_hop"),"Unknown route policy")
+    check(shock_channel in ("capacity","delivery"),"Unknown shock channel")
     check(order_policy in ("legacy_stock_only","forward_input_coverage"),
           "Unknown input ordering policy")
     check(0<=shock_severity<=1 and 0<=shock_source<n and periods>0,"Invalid shock")
@@ -112,7 +113,7 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         # Common exogenous (not network-specific) productivity perturbation:
         noise=rng.normal(0,.005,n)
         capacity=x*np.clip(1+noise,.8,1.2)
-        if shock_start<=t<shock_start+shock_length:
+        if shock_channel=="capacity" and shock_start<=t<shock_start+shock_length:
             capacity[shock_source]*=1.0-shock_severity
         # Material requirements are non-substitutable in the primary model.
         # A buyer needs every positive physical input to produce a unit.
@@ -144,6 +145,15 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
                 if order<=0:continue
                 quantity=min(order,max(float(s.goods[i]),0))
                 if quantity<order:unfilled_physical+=order-quantity
+                # Prospective delivery-interruption shock: the seller retains
+                # any undelivered real goods. Nothing is created or destroyed.
+                # Unlike the legacy productivity shock, this acts on actual
+                # shipment eligibility and has no direct q/topology coefficient.
+                if (shock_channel=="delivery" and i==shock_source
+                        and shock_start<=t<shock_start+shock_length):
+                    withheld=quantity*shock_severity
+                    quantity-=withheld
+                    unfilled_physical+=withheld
                 if quantity<=0:continue
                 permit,fee=allowed(P,i,j,mode,hop_policy)
                 if not permit:
