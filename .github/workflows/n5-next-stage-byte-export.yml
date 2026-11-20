@@ -1,0 +1,31 @@
+name: N5 verified multi-seed result original-byte public staging
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-next-stage-byte-export.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  preserve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify original release assets and stage exact bytes
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python tools/n5_next_stage_exact_export.py
+      - name: Store reversible export in versioned public staging branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c n5-next-stage-multiseed-byte-staging-20261120
+          git add staging/n5_next_stage_20261120/archive_bytes.b64 staging/n5_next_stage_20261120/manifest.json
+          git commit -m 'N5 original 4-asset multiseed evidence byte staging [skip ci]'
+          git push --set-upstream origin n5-next-stage-multiseed-byte-staging-20261120
