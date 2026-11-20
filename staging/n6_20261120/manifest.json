@@ -1,0 +1,68 @@
+{
+  "schema": "n6_exact_original_public_source_archives_v1",
+  "original_repository": "ALRIER/On_the_public_impossibilityII",
+  "releases": [
+    {
+      "tag": "n6-public-mechanism-trace-44809258583-a1",
+      "assets": [
+        {
+          "name": "n6_mechanism_trace.tar.gz",
+          "size": 42270,
+          "sha256": "549d8266956883b4099f34dd9ec5162460d02651c3d78815dc01bb7247ec01e1"
+        },
+        {
+          "name": "output_sha256.txt",
+          "size": 496,
+          "sha256": "e143252fdd0d59688e376030ac3076d90b3c2da4fa9c49bef3aadbdac80a0930"
+        },
+        {
+          "name": "source_commit.txt",
+          "size": 41,
+          "sha256": "23e7d131c1d6ae74dae7672caeff0b062e12c8cce5116965b473ada61a4b6331"
+        },
+        {
+          "name": "source_sha256.txt",
+          "size": 504,
+          "sha256": "9d7bd12ce16a4e8996d7f2223b14884c3b418793f55b8e42fa000d242108024e"
+        }
+      ]
+    },
+    {
+      "tag": "n6-public-viability-44809509073-a1",
+      "assets": [
+        {
+          "name": "n6_viability_falsification.tar.gz",
+          "size": 10287,
+          "sha256": "79734475471ed408a0bc98046dfd7404ca89afad423ca661e17eb899c87d35d2"
+        },
+        {
+          "name": "output_sha256.txt",
+          "size": 385,
+          "sha256": "967a100a0b5e329875e6f4419ad46ed04aba0054d8c301f684256ea69171e661"
+        },
+        {
+          "name": "source_commit.txt",
+          "size": 41,
+          "sha256": "1b49f57a5435fac57d40996c309d0d2a13d6cad6479bdf2ea426a721c650a503"
+        },
+        {
+          "name": "source_sha256.txt",
+          "size": 404,
+          "sha256": "c40451d97d1b888207a1f18f29baa3878af438ca53c1720185390c64f7a840b0"
+        }
+      ]
+    }
+  ],
+  "source_snapshots": {
+    "runtime/tasks/n5_clearing_engine.py": "074adc3e575c972f2ebaa0242c27b30624c8aabd24d00a0f3e5341891eee1eba",
+    "runtime/tasks/n6_transmission_diagnostic.py": "03d01a85c2a1530dcb6aa995fa34293acc261d9b8a274475df021a269013edd7",
+    "runtime/tasks/n6_viability_falsification.py": "719e6aaaf0e9c9e06a072486ecc6203bdcfd7842817bfdadbf38a5022b28c1d9",
+    ".github/workflows/n6-transmission-gate.yml": "1e9d3d526bbe0bde847dbc47680396654dc89fae9202d898745722a16b9c4a8c",
+    ".github/workflows/n6-viability-falsification.yml": "afec030d6e7f28cf3cb58f2187919b6fd2001e1ce954fe6c6c6abd4ee8741b68"
+  },
+  "archive_filename": "n6_two_original_public_releases.tar.gz",
+  "archive_bytes": 66858,
+  "archive_sha256": "e780209abd3a250e8f14eadcf5ba7a391ad7af852d934ac0a1d3f918b976336b",
+  "source_commit": "e9fc6c72e28d2480a692101c922aabd836215183",
+  "no_private_GitHub_actions_invoked": true
+}

@@ -1,0 +1,230 @@
+{
+  "schema": "n6_verified_readonly_source_report_v1",
+  "run_ids": [
+    44809258583,
+    44809509073
+  ],
+  "original_public_release_archive_sha256": "e780209abd3a250e8f14eadcf5ba7a391ad7af852d934ac0a1d3f918b976336b",
+  "viability_by_inventory_and_route": [
+    {
+      "inventory_months": 0.5,
+      "routing": "direct",
+      "late_output_ratio_mean": 0.005580747814794361,
+      "final_near_zero_sector_count_mean": 103.0,
+      "eligible_technology_mass_mean": 0.9991215613498402
+    },
+    {
+      "inventory_months": 0.5,
+      "routing": "two_hop",
+      "late_output_ratio_mean": 0.005580747814794361,
+      "final_near_zero_sector_count_mean": 103.0,
+      "eligible_technology_mass_mean": 0.9999994549121879
+    },
+    {
+      "inventory_months": 0.5,
+      "routing": "zero_frictions",
+      "late_output_ratio_mean": 0.005580747814794361,
+      "final_near_zero_sector_count_mean": 103.0,
+      "eligible_technology_mass_mean": 1.0
+    },
+    {
+      "inventory_months": 1.5,
+      "routing": "direct",
+      "late_output_ratio_mean": 0.005580747814794361,
+      "final_near_zero_sector_count_mean": 103.0,
+      "eligible_technology_mass_mean": 0.9991215613498402
+    },
+    {
+      "inventory_months": 1.5,
+      "routing": "two_hop",
+      "late_output_ratio_mean": 0.005580747814794361,
+      "final_near_zero_sector_count_mean": 103.0,
+      "eligible_technology_mass_mean": 0.9999994549121879
+    },
+    {
+      "inventory_months": 1.5,
+      "routing": "zero_frictions",
+      "late_output_ratio_mean": 0.9979662862615717,
+      "final_near_zero_sector_count_mean": 0.0,
+      "eligible_technology_mass_mean": 1.0
+    }
+  ],
+  "n6_first_trace": {
+    "schema": "n6_mechanism_trace_public_engineering_gate_v1",
+    "original_104x104_A_unchanged": true,
+    "original_q2_six_bands_unchanged": true,
+    "original_eight_economic_anchors_present_but_not_applied": true,
+    "original_10_parameter_8_anchor_parity_certified": false,
+    "original_empirical_Q3_Q4_closure": false,
+    "original_input_sha256": "880f565e47b3b4e7b8f36060109fe2359f84f6412010f05598234bd9ca2e88e0",
+    "original_target_sha256": "f29f8af23198df44b57851c0815ac254a978817eb4eb2af9aae3312ed56a1289",
+    "experimental_source_sectors": [
+      49,
+      57
+    ],
+    "networks": [
+      "inherited",
+      "reconstructed_00",
+      "reconstructed_31"
+    ],
+    "seed": 961120,
+    "policies": [
+      "legacy_stock_only",
+      "forward_input_coverage"
+    ],
+    "finance_regimes": [
+      "tight",
+      "loose"
+    ],
+    "shock_channels": [
+      "capacity",
+      "delivery"
+    ],
+    "original_full_ledger_trajectories": 96,
+    "original_monthly_trace_rows": 1152,
+    "matched_network_shock_contrasts": 32,
+    "maximum_goods_and_money_conservation_residual": 7.105427357601002e-15,
+    "read_only_trace_does_not_modify_outputs": true,
+    "no_friction_placebo_pass": true,
+    "synthetic_control_real_VA_shock_did": 2.640109024893505,
+    "network_channel_exposures": {
+      "inherited": {
+        "channel_totals": {
+          "seller_goods_shortfall": 21.34334385514371,
+          "shock_withheld": 0.02851451714917683,
+          "route_denied": 0.0,
+          "cash_shortfall": 0.0,
+          "payment_edge_capacity_shortfall": 3.601146336445933
+        },
+        "input_limited_month_sector_events": 19776,
+        "input_limited_output_gap": 310.63369029322126,
+        "ordered_total": 34.91600914459834,
+        "settled_total": 9.943004435859512,
+        "unsettled_total": 24.973004708738834
+      },
+      "reconstructed_00": {
+        "channel_totals": {
+          "seller_goods_shortfall": 14.00439008166585,
+          "shock_withheld": 0.00034999720285088117,
+          "route_denied": 0.022574085533652928,
+          "cash_shortfall": 0.0,
+          "payment_edge_capacity_shortfall": 1.2032629951729394
+        },
+        "input_limited_month_sector_events": 19776,
+        "input_limited_output_gap": 312.0416636075814,
+        "ordered_total": 25.46847615476157,
+        "settled_total": 10.237898995186288,
+        "unsettled_total": 15.230577159575278
+      },
+      "reconstructed_31": {
+        "channel_totals": {
+          "seller_goods_shortfall": 19.266475200578082,
+          "shock_withheld": 0.0074715320587137755,
+          "route_denied": 0.021376324991971007,
+          "cash_shortfall": 0.0,
+          "payment_edge_capacity_shortfall": 2.239739825265245
+        },
+        "input_limited_month_sector_events": 19776,
+        "input_limited_output_gap": 312.0416636075814,
+        "ordered_total": 31.25410061587251,
+        "settled_total": 9.7190377329785,
+        "unsettled_total": 21.53506288289401
+      }
+    },
+    "value_added_shock_DID": {
+      "n": 32,
+      "nonzero": 0,
+      "positive": 0,
+      "negative": 0,
+      "mean": 0.0,
+      "minimum": 0.0,
+      "maximum": 0.0
+    },
+    "consumption_shock_DID": {
+      "n": 32,
+      "nonzero": 8,
+      "positive": 0,
+      "negative": 8,
+      "mean": -9.512098042226136e-05,
+      "minimum": -0.0008620313463376661,
+      "maximum": 0.0
+    },
+    "shocked_value_added_levels": {
+      "n": 32,
+      "nonzero": 32,
+      "positive": 0,
+      "negative": 32,
+      "mean": -0.0558530172480719,
+      "minimum": -0.15404672155230736,
+      "maximum": -0.004926722545043005
+    },
+    "network_reconstructed_marginal_input_limit_did": {
+      "n": 32,
+      "nonzero": 0,
+      "positive": 0,
+      "negative": 0,
+      "mean": -4.440892098500626e-16,
+      "minimum": -3.552713678800501e-15,
+      "maximum": 0.0
+    },
+    "large_scale_ML_ABM_optimization_authorized": false,
+    "manuscript_economic_improvement_confirmed": false,
+    "diagnostic_only": "N6 stage 1: conditional physical-financial mechanism, not original economic equivalence."
+  },
+  "n6_viability": {
+    "schema": "n6_no_shock_104sector_viability_falsification_v1",
+    "stage": "N6-1b",
+    "original_A_frozen": true,
+    "original_Q2_six_bands_frozen": true,
+    "simulated_scenarios": 36,
+    "monthly_path_rows": 648,
+    "base_order_policy": "forward_input_coverage",
+    "read_only_mechanism_trace": true,
+    "no_shock_periods": 18,
+    "zero_financial_friction_topology_placebo_pass": true,
+    "max_conservation_residual": 2.1316282072803006e-14,
+    "route_coverage_and_output_by_policy": {
+      "direct": {
+        "count": 12,
+        "mean_late_output_ratio": 0.005580747814794361,
+        "min_late_output_ratio": 0.005580747814794361,
+        "max_late_output_ratio": 0.005580747814794361,
+        "mean_eligible_input_mass_fraction": 0.9991215613498402,
+        "mean_near_zero_sectors_last_month": 103.0,
+        "total_seller_shortfall": 40.378374152214604,
+        "total_route_denied": 0.028027301759789604,
+        "total_payment_capacity_shortfall": 5.60309486266756
+      },
+      "two_hop": {
+        "count": 12,
+        "mean_late_output_ratio": 0.005580747814794361,
+        "min_late_output_ratio": 0.005580747814794361,
+        "max_late_output_ratio": 0.005580747814794361,
+        "mean_eligible_input_mass_fraction": 0.9999994549121878,
+        "mean_near_zero_sectors_last_month": 103.0,
+        "total_seller_shortfall": 43.01880382141064,
+        "total_route_denied": 2.626229965812687e-05,
+        "total_payment_capacity_shortfall": 5.731880480965966
+      },
+      "zero_frictions": {
+        "count": 12,
+        "mean_late_output_ratio": 0.5017735170381831,
+        "min_late_output_ratio": 0.005580747814794361,
+        "max_late_output_ratio": 0.9979662862615717,
+        "mean_eligible_input_mass_fraction": 1.0,
+        "mean_near_zero_sectors_last_month": 51.5,
+        "total_seller_shortfall": 29.973447734292666,
+        "total_route_denied": 0.0,
+        "total_payment_capacity_shortfall": 0.0
+      }
+    },
+    "source_m001_sha256": "880f565e47b3b4e7b8f36060109fe2359f84f6412010f05598234bd9ca2e88e0",
+    "source_t001_sha256": "f29f8af23198df44b57851c0815ac254a978817eb4eb2af9aae3312ed56a1289",
+    "legacy_original_8x10_economic_anchors_applied": false,
+    "original_economic_model_certified": false,
+    "economic_optimization_authorized": false,
+    "note": "If even zero-friction route coverage produces low late output, repair physical stock/replenishment dynamics BEFORE network search; otherwise isolate payment and shipment support as the bottleneck."
+  },
+  "scientific_8_anchor_model_certified": false,
+  "reviewer_n6_R1_through_R5_closed": false
+}
