@@ -72,7 +72,7 @@ def main():
     grouped=defaultdict(list)
     for r in rows:grouped[(r["inventory"],r["route_policy"])].append(r)
     table=[]
-    for inv in (".5","1.5"):
+    for inv in ("0.5","1.5"):
         for policy in ("direct","two_hop","zero_frictions"):
             rr=grouped[(inv,policy)]
             assert len(rr)==6,(inv,policy,len(rr))
