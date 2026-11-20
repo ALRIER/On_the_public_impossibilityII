@@ -208,7 +208,7 @@ def main():
     csvwrite(out/"ABM_all_32_matched_trajectories.csv",economic_rows)
     csvwrite(out/"ABM_all_12_paired_contrasts.csv",pairing)
     require(np.array_equal(A,A0),"Frozen original technology altered")
-    require(len(economic_rows)==len(sources)*len(ABM_SEEDS)*len(arms)*2)
+    require(len(economic_rows)==len(sources)*len(ABM_SEEDS)*len(arms)*2,"ABM trajectory count incomplete")
     def counts(metric):
         vals=np.array([r[metric] for r in pairing])
         return {"n":len(vals),"positive":int(np.sum(vals>1e-10)),
