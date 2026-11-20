@@ -1,0 +1,15 @@
+{
+  "schema": "n5_public_engineering_repair_summary_v1",
+  "verified_inputs": [
+    "44758150356",
+    "44758591721"
+  ],
+  "source_release_tags": [
+    "n5-public-forward-coverage-44758150356-a1",
+    "n5-public-delivery-channel-44758591721-a1"
+  ],
+  "original_structure_nonzero_delivery_did": 3,
+  "original_structure_total_delivery_did": 4,
+  "unmapped_original_economic_anchors": 8,
+  "full_scientific_certification": false
+}
