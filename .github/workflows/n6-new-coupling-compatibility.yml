@@ -1,0 +1,71 @@
+name: N6-2 new payment coupling compatibility with certified Test3 reference (public only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n6-new-coupling-compatibility.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n6-public-new-coupling-compatibility
+  cancel-in-progress: false
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install bounded numerical dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Validate unchanged public boundary and legacy regression
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n6_coupling_compatibility_gate.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Execute N6-2 compatibility preflight and necessary payment-route analysis
+        run: python -m runtime.tasks.n6_coupling_compatibility_gate
+      - name: Fail closed on false anchor certification or missing evidence
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path('outputs/n6_coupling_compatibility/status.json').read_text())
+          assert r['old_test3_validation_preserved'] is True
+          assert r['only_new_coupling_is_under_test'] is True
+          assert r['8_original_frozen_anchors_present']==8
+          assert r['genuine_original_moments_simulated_in_this_public_run']==0
+          assert r['8_anchor_legacy_transition_compatibility_confirmed'] is False
+          assert r['original_104sector_technological_A_unchanged']
+          assert r['original_Q2_six_acceptance_bands_unchanged']
+          assert r['no_shock_public_engineering_cases']==72
+          assert r['route_static_cases']==36
+          assert r['monthly_output_paths']==1296
+          assert r['no_frictions_placebo_pairs_checked']==8
+          assert r['max_goods_inputs_money_residual']<1e-9
+          assert r['new_coupling_compatible_with_old_test3'] is False
+          assert r['authorization_for_economic_ml_search'] is False
+          print('N6-2 new-coupling regression evidence computed; legacy economic parity remains BLOCKED.')
+          PY
+      - name: Persist unfiltered, exact-byte original output as immutable Release
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          sha256sum runtime/tasks/n5_clearing_engine.py runtime/tasks/n6_coupling_compatibility_gate.py public_bundle/n5_v1/m001.json public_bundle/n5_v1/t001.json public_bundle/n5_v1/r001.json > archive/source_sha256.txt
+          (find outputs/n6_coupling_compatibility -type f -print0 2>/dev/null || true) | sort -z | xargs -0 -r sha256sum > archive/output_sha256.txt
+          git rev-parse HEAD > archive/source_commit.txt
+          tar -czf archive/n6_coupling_compatibility.tar.gz -C outputs .
+          tag="n6-public-coupling-compatibility-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" archive/n6_coupling_compatibility.tar.gz archive/source_sha256.txt archive/output_sha256.txt archive/source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N6-2 new economic clearing coupling compatibility preflight (not old Test3 recertification)" \
+            --notes "72 matched no-shock engineering trajectories, 1296 monthly rows, static payment-route requirements, preserved eight old anchor hashes. Existing Test3 certification unchanged; new 8-anchor state transition compatibility NOT certified."
