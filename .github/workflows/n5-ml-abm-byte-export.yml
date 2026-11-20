@@ -1,0 +1,31 @@
+name: N5 ML-ABM original-release exact-byte public staging
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-ml-abm-byte-export.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify and package original GitHub release bytes and immutable code snapshot
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python tools/n5_ml_abm_exact_export.py
+      - name: Store b64 archive for direct private Git connector transfer, no private Actions
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c n5-ml-abm-discovery-byte-staging-20261120
+          git add staging/n5_ml_abm_discovery_20261120/archive_bytes.b64 staging/n5_ml_abm_discovery_20261120/manifest.json
+          git commit -m 'N5 verified original ML-ABM evidence byte staging [skip ci]'
+          git push --set-upstream origin n5-ml-abm-discovery-byte-staging-20261120
