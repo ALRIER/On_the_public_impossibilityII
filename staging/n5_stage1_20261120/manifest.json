@@ -1,0 +1,98 @@
+{
+  "schema": "n5_stage1_three_release_exact_bytes_v1",
+  "source_repository": "ALRIER/On_the_public_impossibilityII",
+  "releases": [
+    {
+      "tag": "n5-public-stage1-mechanism-gate-44756238527-a1",
+      "assets": [
+        {
+          "name": "n5_stage1_diagnostic.tar.gz",
+          "bytes": 1054,
+          "sha256": "b70ee5d491f1628a30f10044757aa3066ba92c2a3c1d9bba531e93553165fa79"
+        },
+        {
+          "name": "output_sha256.txt",
+          "bytes": 244,
+          "sha256": "47a029a86258d5b83c15a0b38dd6ed5b52c8b29a07c7bacc3a32897e1f6fe878"
+        },
+        {
+          "name": "source_commit.txt",
+          "bytes": 41,
+          "sha256": "151de7aff86a35bd4b33ecb9529e345dae51c0270e56407964abf830fb13197b"
+        },
+        {
+          "name": "source_sha256.txt",
+          "bytes": 303,
+          "sha256": "566af9db9acd647d15b4da1215cba9cf815d32c8c67e8abfaf4ffa598c0b39ec"
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-forward-coverage-44758150356-a1",
+      "assets": [
+        {
+          "name": "neutral_forward_coverage_outputs.tar.gz",
+          "bytes": 3342,
+          "sha256": "c20951fc66f733e4f28727047c4b6c416cb6cf60329dd3ab2a6b43c8ad186f16"
+        },
+        {
+          "name": "output_sha256.txt",
+          "bytes": 380,
+          "sha256": "a0a8bb526ba09e97544af5dcf3e3be6109b17d6987f2192c75988af98b59aabd"
+        },
+        {
+          "name": "source_commit.txt",
+          "bytes": 41,
+          "sha256": "2cf26e842da49d34d33aecc94166e0256d51d721cfdaa1b37e5af0609896cda8"
+        },
+        {
+          "name": "source_sha256.txt",
+          "bytes": 311,
+          "sha256": "4a4e6913953a5dacac0ef50e127218a6afb5affc1ee383711a1d95b5d1835d6a"
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-delivery-channel-44758591721-a1",
+      "assets": [
+        {
+          "name": "neutral_delivery_channel.tar.gz",
+          "bytes": 4057,
+          "sha256": "7cfb88695647ed96b699b71062aad5776c03246e02e3ec948efa74e4d5309d07"
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "ba812ac4a27dd36e7fa73408a15de9577e22560e60fb540c1baf948e9cb9894b"
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 390,
+          "sha256": "a05a8b707ddd4566aea7382b83685dd80b2ee8d3b478416c88c08420820afe3c"
+        },
+        {
+          "name": "sha256_sources.txt",
+          "bytes": 307,
+          "sha256": "35aef561e1dc03f084e520e830378d1fd0f804441f83c7d683bbdfa79c638486"
+        }
+      ]
+    }
+  ],
+  "source_scripts": {
+    "tools/n5_stage1_mechanism_gate.py": "922a3b8336efe68313fae831772e94eaad4d14ffc8ee0419d35b915f97e459b1",
+    "runtime/tasks/n5_clearing_engine.py": "c3ff7c0ade29d50203ab6ba11118bdf24e93fa5ef7713d8fc5f9a300696dcdca",
+    "runtime/tasks/n5_forward_coverage_pilot.py": "a01873518f1db1fcc940123590ab90e6d7c11fc3277fe3ce15da8f7652c8d50c",
+    "runtime/tasks/n5_delivery_channel_pilot.py": "6fe49f323d6d07a132eec368c7ab76b703a040d6fc6ba80db34818e34da90178",
+    "tools/n5_verified_diagnostic_report.py": "4312b17ea64ac59c12dba80421da7ec6cd4b6402048279d462c017449adccee2",
+    ".github/workflows/n5-stage1-mechanism-gate.yml": "3fe98534173a93f5b2223cdb5411ffdb815376c2bb676c4f01e9d0ecba7f1777",
+    ".github/workflows/n5-forward-coverage-pilot.yml": "247ef3ab6b05d42c737401a76c3d7f69786a44eb0f14c0ada532b5745bfbc9be",
+    ".github/workflows/n5-delivery-channel-pilot.yml": "0b4ca87c65060b5a53b690f69b6b672c2843ce45d259061b10fb29499df18a93"
+  },
+  "source_code_commit": "ea3f13d4dd4dcaad304c11dff2fe6fd7b0d3464e",
+  "no_private_actions_invoked": true,
+  "archive_filename": "n5_three_original_releases_and_source.tar.gz",
+  "archive_bytes": 25073,
+  "archive_sha256": "8747be4722f563b62cbd87f6dd7d69c5fba8920263843b3e312988120bd5455a",
+  "asset_count": 12,
+  "original_asset_bytes": 10511
+}
