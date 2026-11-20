@@ -1,0 +1,413 @@
+{
+  "schema": "n5_public_exact_release_asset_byte_export_r1",
+  "original_public_repository": "ALRIER/On_the_public_impossibilityII",
+  "releases": [
+    {
+      "tag": "n5-public-q1-four-arm-pilot-44745711109-a1",
+      "public_url": "https://github.com/ALRIER/On_the_public_impossibilityII/releases/tag/n5-public-q1-four-arm-pilot-44745711109-a1",
+      "assets": [
+        {
+          "name": "neutral_four_arm_original_ledgers.tar.gz",
+          "bytes": 8323017,
+          "sha256": "f15f41735f8fc85598b990378a2bc3ba32b567d1da89a3a1f30ff4cab6cbc027",
+          "release_asset_id": 771956917
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "9320d6c123845dea1780f02802d9f48a53ac1729a82078253e7a57f6909e771c",
+          "release_asset_id": 771956921
+        },
+        {
+          "name": "sha256_code.txt",
+          "bytes": 104,
+          "sha256": "2ec904f3306a1e15b513fbc3e6814e1ffca5076685143936c1cc58119caec7da",
+          "release_asset_id": 771956915
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 709,
+          "sha256": "46796fb539475b79aaf234847c2acbf24dafa9522f1c93354c39888187b001ee",
+          "release_asset_id": 771956914
+        },
+        {
+          "name": "sha256_source_bundle.txt",
+          "bytes": 288,
+          "sha256": "73d25abf0b845cf5659406bbb37cd97c41376fa4bcaac9efaa95856eb0fcd38a",
+          "release_asset_id": 771956919
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-q2-batch-r1-44745247621-a1",
+      "public_url": "https://github.com/ALRIER/On_the_public_impossibilityII/releases/tag/n5-public-q2-batch-r1-44745247621-a1",
+      "assets": [
+        {
+          "name": "neutral_reviewer_results.tar",
+          "bytes": 30720,
+          "sha256": "1948781b36651a2d6e48a5eaa777356ef477079ca69e06a8514f80c92c796691",
+          "release_asset_id": 771947084
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "470fd443ea398ecf375ec68772c6c01e1219443e054fcc9882d387d243b6113d",
+          "release_asset_id": 771947123
+        },
+        {
+          "name": "sha256_analysis_code.txt",
+          "bytes": 95,
+          "sha256": "fcb045ed73aa773330f581822baf1532c4dea15b68474c340a1a8670bc724392",
+          "release_asset_id": 771947089
+        },
+        {
+          "name": "sha256_original_n3_assets.txt",
+          "bytes": 52,
+          "sha256": "8e5f0ef21ad2b22e96663d3565a056e37f9760ca65166b2cc83ebb53b4fcda44",
+          "release_asset_id": 771947096
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 390,
+          "sha256": "732aff666c90bf5fcb3216ad4d9853def1f07355cf578787be9aec533aac7623",
+          "release_asset_id": 771947085
+        },
+        {
+          "name": "sha256_source_bundle.txt",
+          "bytes": 388,
+          "sha256": "2ed2236d888bd365bd6ed67f15f041d796d8e59839609ddc9ffff9fa7ad6e491",
+          "release_asset_id": 771947090
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-q3-batch-r1-44745247621-a1",
+      "public_url": "https://github.com/ALRIER/On_the_public_impossibilityII/releases/tag/n5-public-q3-batch-r1-44745247621-a1",
+      "assets": [
+        {
+          "name": "neutral_reviewer_results.tar",
+          "bytes": 92160,
+          "sha256": "19d2157a7d1fe6c4bbbe48404c3f66accb0ed445536a1f28090b58d538c26a9a",
+          "release_asset_id": 771946540
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "470fd443ea398ecf375ec68772c6c01e1219443e054fcc9882d387d243b6113d",
+          "release_asset_id": 771946565
+        },
+        {
+          "name": "sha256_analysis_code.txt",
+          "bytes": 95,
+          "sha256": "2aeeb1c773af7275bbe17eb9f09d4ebfcf9c0045763dd0aa3889119643bfaef1",
+          "release_asset_id": 771946541
+        },
+        {
+          "name": "sha256_original_n3_assets.txt",
+          "bytes": 52,
+          "sha256": "8e5f0ef21ad2b22e96663d3565a056e37f9760ca65166b2cc83ebb53b4fcda44",
+          "release_asset_id": 771946531
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 409,
+          "sha256": "83abb2ec301ca72a1839ee421772344ee4d388e96577b85d5448de85127b5f50",
+          "release_asset_id": 771946539
+        },
+        {
+          "name": "sha256_source_bundle.txt",
+          "bytes": 388,
+          "sha256": "2ed2236d888bd365bd6ed67f15f041d796d8e59839609ddc9ffff9fa7ad6e491",
+          "release_asset_id": 771946530
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-q4-batch-r1-44745247621-a1",
+      "public_url": "https://github.com/ALRIER/On_the_public_impossibilityII/releases/tag/n5-public-q4-batch-r1-44745247621-a1",
+      "assets": [
+        {
+          "name": "neutral_reviewer_results.tar",
+          "bytes": 10240,
+          "sha256": "56cabade10b1a18a9d74a8b90000db0d7549340faa619e3912ee08d773091c7f",
+          "release_asset_id": 771946328
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "470fd443ea398ecf375ec68772c6c01e1219443e054fcc9882d387d243b6113d",
+          "release_asset_id": 771946343
+        },
+        {
+          "name": "sha256_analysis_code.txt",
+          "bytes": 95,
+          "sha256": "6c935f727bcf9f7751d9bf38f374dc5d377d2a7e50b3dc471c9835e0b0eb2ec0",
+          "release_asset_id": 771946325
+        },
+        {
+          "name": "sha256_original_n3_assets.txt",
+          "bytes": 226,
+          "sha256": "90773f3660afd99e75d21e5199af8b8a7e9caa4d17af2694826b47c38c6c714e",
+          "release_asset_id": 771946329
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 307,
+          "sha256": "83d5908d36994ffb75a12ef6f5f8c833739f3cc4f4b379b3f36764760ea429ed",
+          "release_asset_id": 771946324
+        },
+        {
+          "name": "sha256_source_bundle.txt",
+          "bytes": 388,
+          "sha256": "2ed2236d888bd365bd6ed67f15f041d796d8e59839609ddc9ffff9fa7ad6e491",
+          "release_asset_id": 771946327
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-ml-guided-pilot-44748984557-a1",
+      "public_url": "https://github.com/ALRIER/On_the_public_impossibilityII/releases/tag/n5-public-ml-guided-pilot-44748984557-a1",
+      "assets": [
+        {
+          "name": "neutral_surrogate_and_fresh_abm.tar.gz",
+          "bytes": 15892,
+          "sha256": "60f572b96d4d18074ea9dff6c35187557f30a9f99b5bbd1d26a30681af18a017",
+          "release_asset_id": 772030253
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "e6d130a4694520d10ac83c41f6594707b919c61bfa04b6103fad9b7d7a3d9231",
+          "release_asset_id": 772030256
+        },
+        {
+          "name": "sha256_code.txt",
+          "bytes": 102,
+          "sha256": "487178660c720f01ecef5eaf2512655bd1d000e7dd82e11cc10d4d0462cd050c",
+          "release_asset_id": 772030258
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 618,
+          "sha256": "9c0f9dc0971540c6119d3d8fea19f77cab0882dd982261333edf61d6fbc38119",
+          "release_asset_id": 772030254
+        },
+        {
+          "name": "sha256_sources.txt",
+          "bytes": 192,
+          "sha256": "259ed046b074848df68d529a667adc8543af5c857e881ed031a88ae149df5389",
+          "release_asset_id": 772030252
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-q1-tuning-44749701109-a1",
+      "public_url": "https://github.com/ALRIER/On_the_public_impossibilityII/releases/tag/n5-public-q1-tuning-44749701109-a1",
+      "assets": [
+        {
+          "name": "neutral_tuning_evidence.tar.gz",
+          "bytes": 2394,
+          "sha256": "643e5451d2bc6ecc962b5146188513615c72e1e3df841e473959a8ccab993a7c",
+          "release_asset_id": 772047407
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "75f141fdfc3e821bc337a42606016f66c3e61d33274f71535472f541279c73bc",
+          "release_asset_id": 772047410
+        },
+        {
+          "name": "sha256_code.txt",
+          "bytes": 108,
+          "sha256": "96de227d679e94c21650e222e5cdc756b4796938b8c70bdb2843e2d283a9c6c7",
+          "release_asset_id": 772047413
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 308,
+          "sha256": "135cf0887a1a30b493874efea696d0f4cfa1e3c4220bc35ce5d62ad1d8a26e54",
+          "release_asset_id": 772047417
+        },
+        {
+          "name": "sha256_sources.txt",
+          "bytes": 192,
+          "sha256": "259ed046b074848df68d529a667adc8543af5c857e881ed031a88ae149df5389",
+          "release_asset_id": 772047408
+        }
+      ]
+    },
+    {
+      "tag": "n5-public-q2-tuning-44749701109-a1",
+      "public_url": "https://github.com/ALRIER/On_the_public_impossibilityII/releases/tag/n5-public-q2-tuning-44749701109-a1",
+      "assets": [
+        {
+          "name": "neutral_tuning_evidence.tar.gz",
+          "bytes": 32294,
+          "sha256": "f0a9312c6546cb6b03fafc7db06fef2963190fbe4af0290f4ebae2ea696d3077",
+          "release_asset_id": 772046091
+        },
+        {
+          "name": "public_source_commit.txt",
+          "bytes": 41,
+          "sha256": "75f141fdfc3e821bc337a42606016f66c3e61d33274f71535472f541279c73bc",
+          "release_asset_id": 772046096
+        },
+        {
+          "name": "sha256_code.txt",
+          "bytes": 102,
+          "sha256": "05c2ffd41f5711919e92dd300336e972712ecc5116f9655f701bc1ce58084be2",
+          "release_asset_id": 772046090
+        },
+        {
+          "name": "sha256_outputs.txt",
+          "bytes": 397,
+          "sha256": "5162d7b0b086032a1674fc12ba5c81b5c60d318d5c17952bc9e2e220717e5879",
+          "release_asset_id": 772046092
+        },
+        {
+          "name": "sha256_sources.txt",
+          "bytes": 192,
+          "sha256": "259ed046b074848df68d529a667adc8543af5c857e881ed031a88ae149df5389",
+          "release_asset_id": 772046094
+        }
+      ]
+    }
+  ],
+  "original_public_analysis_source_sha256": {
+    "runtime/tasks/n5_q1_four_arm_pilot.py": "d73998b085a8002884aee91a9ff55ab493aec96615db16f857c796fcf6ed58aa",
+    "runtime/tasks/n5_q2_batch.py": "580abfd2c76dc5d1dfcd117a34c50f5ccb4cf44d6234dbe756eddf4a9b7e44e3",
+    "runtime/tasks/n5_q3_batch.py": "8e35d0683b72c8dadbd4afe0f67ca1d71a3728c523465a27aa23a32420b45259",
+    "runtime/tasks/n5_q4_batch.py": "2c24a8efc8659f826dc8e632ec8cc0be78e5f7d59cf4c8a6bc9b6c0d13e21cc8",
+    "runtime/tasks/n5_ml_guided_pilot.py": "0c067c5c1300871146d84201f70e01acf4fe72aae0fffbf5d7115dc9c17efdc1",
+    "runtime/tasks/n5_q1_mechanism_exposure.py": "aac9a6343d687d2383b23d11daaf27b9603b81058bc36786e2de270ed1d27ac1",
+    "runtime/tasks/n5_q2_local_tuning.py": "836ac708eb46feef822c28cf8feb21c0f0f4a848026b3122b483de4e1a66d202",
+    ".github/workflows/n5-q1-four-arm-pilot.yml": "73d21ac94440063cf7af724e444dcbd8bbd156f7f80f9fa7863aabda61e6f570",
+    ".github/workflows/n5-q2-q3-q4-batch.yml": "33905ed3a4cabd88edf8bfbcd877759dff8d062e8a258d01321060b31e95c0a1",
+    ".github/workflows/n5-ml-guided-pilot.yml": "aef54a5502f04ca39dc108823041109e7b274b51bb1a5f187f43eeed88aa6648",
+    ".github/workflows/n5-mechanism-and-network-tuning.yml": "8ad610017010624f174781b5eeb11c4e7c624f0cb9e390395d4bb32b65f185ad"
+  },
+  "all_original_release_assets_sha256_checked": true,
+  "all_original_release_asset_sizes_checked": true,
+  "negative_or_inconclusive_evidence_included": true,
+  "private_gitHub_actions_triggered": false,
+  "total_release_assets": 38,
+  "total_original_release_asset_bytes": 8513201,
+  "original_archive_sha256": "6a4a3547f07cecff15cc5a8883c8c5d7c24d0ebc7c9c7ffcc52d0710ba4d1430",
+  "original_archive_size_bytes": 8374046,
+  "original_archive_filename": "original_n5_release_assets_and_scripts.tar.gz",
+  "encoded_part_bytes": 393216,
+  "decoded_parts": [
+    {
+      "name": "part_000.b64",
+      "size_bytes": 393216,
+      "part_sha256": "5deb92e97dcb5c672989e36cc267e4179dd997d1e695142bb5aa9dc334a0aaa5"
+    },
+    {
+      "name": "part_001.b64",
+      "size_bytes": 393216,
+      "part_sha256": "273a4cc54de4d73d496c960a886b23972474aa45a6a5c0cad1b5f81fe00a480b"
+    },
+    {
+      "name": "part_002.b64",
+      "size_bytes": 393216,
+      "part_sha256": "8800db9e66f82193694e6d96004f275a7f1d59d2e121802d4d497ab929769b5c"
+    },
+    {
+      "name": "part_003.b64",
+      "size_bytes": 393216,
+      "part_sha256": "26ac089e94531b3c047e76c16468a226a12745aadb720f7326f1dff80222b3ad"
+    },
+    {
+      "name": "part_004.b64",
+      "size_bytes": 393216,
+      "part_sha256": "567f9c75cae9a2a1ba013fe1d2ddd16ee0c28679e0267fdb70c3031513bd77fc"
+    },
+    {
+      "name": "part_005.b64",
+      "size_bytes": 393216,
+      "part_sha256": "7a82b3f41094447f3a2877ea6f4bf06207c7baeb6c4a65cb7344f8e293fab780"
+    },
+    {
+      "name": "part_006.b64",
+      "size_bytes": 393216,
+      "part_sha256": "285b0dc01130b6d8e04d784deb476b418f63636d2ba8b35b3e19562e4bcd9959"
+    },
+    {
+      "name": "part_007.b64",
+      "size_bytes": 393216,
+      "part_sha256": "d80a30a0ad313a19d7953924bcf99e8b5d4bf7ac30f35424970c4005e66e3889"
+    },
+    {
+      "name": "part_008.b64",
+      "size_bytes": 393216,
+      "part_sha256": "d88bf81a8fba278d6f8aff3147546c12d230abc625e5b59ec2e38ca72763480d"
+    },
+    {
+      "name": "part_009.b64",
+      "size_bytes": 393216,
+      "part_sha256": "7534f87e9299edd506278dd6ab52ae2f5db3fac3af9aae7254dd9dea594b8636"
+    },
+    {
+      "name": "part_010.b64",
+      "size_bytes": 393216,
+      "part_sha256": "a914e594e0ec2459a3811bc635dd7edbe1b5af9ccbf17b17869b6359c453fb1c"
+    },
+    {
+      "name": "part_011.b64",
+      "size_bytes": 393216,
+      "part_sha256": "9820d81947d9787f3d49a443184e027da6002907f0c17ee519541a2027ea8848"
+    },
+    {
+      "name": "part_012.b64",
+      "size_bytes": 393216,
+      "part_sha256": "216ba0c202bbb95f43a8629c4fb087d47c9206832b74dfc6a504bb32bb26600c"
+    },
+    {
+      "name": "part_013.b64",
+      "size_bytes": 393216,
+      "part_sha256": "ad257d0b54953f9f0ba3655b520f88474bcdc4d29af3f27d28d98ab60221f71b"
+    },
+    {
+      "name": "part_014.b64",
+      "size_bytes": 393216,
+      "part_sha256": "b3d753cb47ba0819384fe60a2ef840a4e89c62c673b7de3dea8596d57387e53f"
+    },
+    {
+      "name": "part_015.b64",
+      "size_bytes": 393216,
+      "part_sha256": "94f9084554a08b4ae9c8f2a0b4d652dee95eeb4b07eacbb5e44f1337ab6df738"
+    },
+    {
+      "name": "part_016.b64",
+      "size_bytes": 393216,
+      "part_sha256": "8e57c98ac3c0837c46320fd59579e9a9880e50728f4af4ce606df9f439db02e5"
+    },
+    {
+      "name": "part_017.b64",
+      "size_bytes": 393216,
+      "part_sha256": "97ac4961a561ab6f4f031a86a041d98f83a38c42ec852b881b857c29822b31a4"
+    },
+    {
+      "name": "part_018.b64",
+      "size_bytes": 393216,
+      "part_sha256": "73ffa1431f11c8ee56295a0ade7474375e937f739518715a7c9d8ad741c948e2"
+    },
+    {
+      "name": "part_019.b64",
+      "size_bytes": 393216,
+      "part_sha256": "e8ed8bbec05f0090e6c2a8b182eac1c637e8f1a25914dcec9e1cd523c5f9c463"
+    },
+    {
+      "name": "part_020.b64",
+      "size_bytes": 393216,
+      "part_sha256": "ce4e03471ecdc1dbeb734fc82a6ebfad44f71dfc6e1123911ef5812a94cdca6a"
+    },
+    {
+      "name": "part_021.b64",
+      "size_bytes": 116510,
+      "part_sha256": "79459fe1c04f2f803034430bf315b543ab166c33a72c65a0e4744aaef44c2550"
+    }
+  ],
+  "private_backup_requires_byte_copy": true,
+  "private_backup_verified_at_public_export_time": false
+}
