@@ -1,0 +1,49 @@
+name: N5 public exact evidence byte export for direct private backup (no private Actions)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-public-byte-export.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-byte-export
+  cancel-in-progress: false
+jobs:
+  verified_release_byte_export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout public releases and scripts only
+        uses: actions/checkout@v4
+      - name: Configure Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate code and original seven public releases by exact asset SHA256
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_original_release_byte_export.py
+          python -m runtime.tasks.n5_original_release_byte_export
+      - name: Commit reversible byte chunks ONLY to separate public staging branch
+        run: |
+          set -euo pipefail
+          BRANCH="n5-public-evidence-byte-staging-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$BRANCH"
+          git add n5_evidence_byte_export/
+          git commit -m "N5 reversible byte-identical seven original public evidence releases for private direct backup"
+          git push origin "HEAD:refs/heads/$BRANCH"
+          echo "STAGING_BRANCH=$BRANCH" >> "$GITHUB_STEP_SUMMARY"
+          echo "Private transfer must use GitHub connector direct Git blob writes; NO private Actions." >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify public export manifest exists on staging ref
+        run: |
+          set -euo pipefail
+          BRANCH="n5-public-evidence-byte-staging-${GITHUB_RUN_ID}"
+          gh api "repos/$GITHUB_REPOSITORY/contents/n5_evidence_byte_export/manifest.json?ref=$BRANCH" \
+            --jq .sha
