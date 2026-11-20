@@ -1,0 +1,33 @@
+name: N5 public exact-byte staging for external private archiving (no private Actions)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-stage1-public-bytes-staging.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-stage1-exact-public-bytes
+  cancel-in-progress: false
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify all original GitHub release assets and stage reversible binary archive
+        run: |
+          python tools/validate_public_release.py
+          python tools/n5_stage1_original_bytes_staging.py
+      - name: Publish independently restorable archive as base64 on dedicated public staging branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c n5-stage1-repair-byte-staging-20261120
+          git add staging/n5_stage1_20261120/archive_bytes.b64 staging/n5_stage1_20261120/manifest.json
+          git commit -m 'N5 public original 12-asset reproducible byte staging [skip ci]'
+          git push --set-upstream origin n5-stage1-repair-byte-staging-20261120
