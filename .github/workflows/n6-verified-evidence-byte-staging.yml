@@ -1,4 +1,5 @@
 name: N6 exact-release evidence and postmortem export (public only)
+# Source-verified original release staging and N6 Test 3 transfer
 on:
   push:
     branches: [main]
