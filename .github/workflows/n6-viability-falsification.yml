@@ -1,0 +1,63 @@
+name: N6 no-shock 104-sector baseline reproduction vs payment route falsification
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n6-viability-falsification.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n6-public-no-shock-viability
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install bounded mathematical dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Run baseline physical and financial conservation tests
+        run: |
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n6_viability_falsification.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Run N6 causal baseline viability and routing analysis
+        run: python -m runtime.tasks.n6_viability_falsification
+      - name: Validate original scientific boundary and all checks
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          x=json.loads(Path('outputs/n6_viability_falsification/status.json').read_text())
+          assert x['original_A_frozen'] and x['original_Q2_six_bands_frozen']
+          assert x['simulated_scenarios']==36
+          assert x['monthly_path_rows']==648
+          assert x['zero_financial_friction_topology_placebo_pass']
+          assert x['max_conservation_residual']<1e-9
+          assert x['legacy_original_8x10_economic_anchors_applied'] is False
+          assert x['original_economic_model_certified'] is False
+          assert x['economic_optimization_authorized'] is False
+          print('N6-1b baseline-routing diagnostic passed, scientific gate remains blocked.')
+          PY
+      - name: Preserve complete public economic paths as immutable release
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          sha256sum runtime/tasks/n5_clearing_engine.py runtime/tasks/n6_viability_falsification.py public_bundle/n5_v1/m001.json public_bundle/n5_v1/t001.json > archive/source_sha256.txt
+          (find outputs/n6_viability_falsification -type f -print0 2>/dev/null || true) | sort -z | xargs -0 -r sha256sum > archive/output_sha256.txt
+          git rev-parse HEAD > archive/source_commit.txt
+          tar -czf archive/n6_viability_falsification.tar.gz -C outputs .
+          tag="n6-public-viability-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" archive/n6_viability_falsification.tar.gz archive/source_sha256.txt archive/output_sha256.txt archive/source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" --title "N6 physically viable baseline vs payment-routing no-shock falsification" \
+            --notes "36 original 104-sector no-shock cases, 648 monthly output path rows: direct vs 2-hop vs zero-friction, frozen A and Q2 bands. NOT original 8-anchor economic certification or a positive economic finding."
