@@ -1,0 +1,50 @@
+{
+  "schema": "n5_ml_abm_original_release_exact_bytes_v1",
+  "original_tag": "n5-public-ml-abm-discovery-44771571783-a1",
+  "public_repo": "ALRIER/On_the_public_impossibilityII",
+  "original_assets": [
+    {
+      "name": "n5_ml_abm_discovery_wave.tar.gz",
+      "size": 41129,
+      "sha256": "3c7f963d25a324eb3b0c472671bd15f889139c1f5f87dccbc4cc17e65c2c0be7"
+    },
+    {
+      "name": "output_sha256.txt",
+      "size": 776,
+      "sha256": "ed85ff76490102b561253a944f7bcd8e3e88abcba8c8dd10ddac129a3fb5264d"
+    },
+    {
+      "name": "source_commit.txt",
+      "size": 41,
+      "sha256": "ef5469648af9ff96acb11b5b5f623c13f9865c9a6c2a748d228e031589f8abe3"
+    },
+    {
+      "name": "source_sha256.txt",
+      "size": 502,
+      "sha256": "5c5adfaf64bc4b63e37b58e6346b53a20a8f01129fba48274f736c591c121187"
+    }
+  ],
+  "source_snapshots": [
+    {
+      "path": "runtime/tasks/n5_ml_abm_discovery_wave.py",
+      "sha256": "2fb4a1dd7cefe2e6d4a4eb99e39d215d11cc3b7cab7a9b03f295bc421b49d153"
+    },
+    {
+      "path": ".github/workflows/n5-ml-abm-discovery-wave.yml",
+      "sha256": "2abd7b8ba1bd97a261c1e5a3912ada26c607681cdbc62dd14a90da1dd9c05a65"
+    },
+    {
+      "path": "runtime/tasks/n5_clearing_engine.py",
+      "sha256": "c3ff7c0ade29d50203ab6ba11118bdf24e93fa5ef7713d8fc5f9a300696dcdca"
+    },
+    {
+      "path": "runtime/tasks/n5_review_proofs.py",
+      "sha256": "9687c1943fce308b40e8b20c82ee83083a2fc72b521000abdc31089cca34d511"
+    }
+  ],
+  "archive_file": "n5_ml_abm_original_release_and_source.tar.gz",
+  "archive_bytes": 59986,
+  "archive_sha256": "e82b27f86c6efe62694f86ec1253a166b6a43e5972542fbd5c827481e2baffe4",
+  "source_commit": "ed2cddb2d13c5a1a5d1f948bbc3b8c1461589ccb",
+  "no_private_actions": true
+}
