@@ -28,7 +28,7 @@ jobs:
       - name: Check engine-level physical and money identities
         run: python -m runtime.tasks.n5_clearing_tests
       - name: Run paired adversarial financial sensitivity and fail-closed anchor audit
-        run: python tools/n5_stage1_mechanism_gate.py
+        run: python -m tools.n5_stage1_mechanism_gate
       - name: Verify diagnostic is not incorrectly promoted to certification
         run: |
           python - <<'PY'
