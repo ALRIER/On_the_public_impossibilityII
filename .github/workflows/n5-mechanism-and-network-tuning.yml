@@ -1,0 +1,90 @@
+name: N5 public Q1 friction mechanism and Q2 local network optimization
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-mechanism-and-network-tuning.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-mechanism-local-tuning
+  cancel-in-progress: false
+jobs:
+  falsification_and_tuning:
+    name: N5 public ${{ matrix.track }} mechanism tuning
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        track: [q1, q2]
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Public scientific stack
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Neutrality and consistency gate
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_q1_mechanism_exposure.py runtime/tasks/n5_q2_local_tuning.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Run ALL frozen diagnostic regimes or original-target local neighborhoods
+        run: |
+          set -euo pipefail
+          if [[ "${{ matrix.track }}" == q1 ]]; then
+            python -m runtime.tasks.n5_q1_mechanism_exposure --out-dir outputs/n5_q1_mechanism_exposure
+          else
+            python -m runtime.tasks.n5_q2_local_tuning --out-dir outputs/n5_q2_local_tuning
+          fi
+      - name: Hard gate original targets and scientific meaning
+        run: |
+          set -euo pipefail
+          TRACK="${{ matrix.track }}" python - <<'PY'
+          import json,os
+          from pathlib import Path
+          t=os.environ["TRACK"]
+          if t=="q1":
+              x=json.loads(Path("outputs/n5_q1_mechanism_exposure/q1_mechanism_status.json").read_text())
+              assert x["fixed_predeclared_regimes"]==12
+              assert x["pilot_paths"]==98
+              assert x["all_periodic_accounting_identities_pass"]
+              assert x["zero_friction_all_arms_real_outcomes_identical"]
+              assert x["original_economic_anchors_applied"]==0
+              assert not x["full_scale_scientific_n5_allowed"]
+          else:
+              x=json.loads(Path("outputs/n5_q2_local_tuning/q2_local_tuning_status.json").read_text())
+              assert x["prospective_structural_candidates"]==256
+              assert x["original_frozen_valid_structures"]==32
+              assert not x["original_reference_targets_changed"]
+              assert not x["causal_economic_outcome_improved_by_structural_fidelity"]
+          print("Original-source scientific limits and public-only gates remain enforced.")
+          PY
+      - name: Archive original public outcomes, including negative evidence
+        run: |
+          set -euo pipefail
+          TRACK="${{ matrix.track }}"
+          case "$TRACK" in
+            q1) ROOT=outputs/n5_q1_mechanism_exposure; SCRIPT=runtime/tasks/n5_q1_mechanism_exposure.py;;
+            q2) ROOT=outputs/n5_q2_local_tuning; SCRIPT=runtime/tasks/n5_q2_local_tuning.py;;
+          esac
+          mkdir -p archive
+          (cd "$ROOT" && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/archive/sha256_outputs.txt")
+          tar -czf archive/neutral_tuning_evidence.tar.gz -C "$ROOT" .
+          sha256sum "$SCRIPT" > archive/sha256_code.txt
+          sha256sum public_bundle/n5_v1/m001.json public_bundle/n5_v1/t001.json > archive/sha256_sources.txt
+          git rev-parse HEAD > archive/public_source_commit.txt
+          TAG="n5-public-${TRACK}-tuning-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" archive/neutral_tuning_evidence.tar.gz \
+            archive/sha256_outputs.txt archive/sha256_code.txt \
+            archive/sha256_sources.txt archive/public_source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 original public ${TRACK} model tuning and diagnostic evidence" \
+            --notes "All preregistered Q1 mechanism regimes or Q2 original target-preserving local controls; unfavorable cases retained. No private Actions and no independent full scientific confirmation."
