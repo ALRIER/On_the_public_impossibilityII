@@ -1,0 +1,31 @@
+name: N6-2 exact original coupling compatibility evidence and support report staging
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n6-coupling-evidence-staging.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify original public Release bytes and derive causal payment-support report
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python tools/n6_coupling_compatibility_export.py
+      - name: Preserve original verified bytes and human/machine-readable reports in staging branch
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c n6-2-coupling-original-evidence-staging-20261120
+          git add staging/n6_coupling_20261120/archive_bytes.b64 staging/n6_coupling_20261120/manifest.json staging/n6_coupling_20261120/N6_COUPLING_COMPATIBILITY_VERIFIED_REPORT.md staging/n6_coupling_20261120/N6_COUPLING_COMPATIBILITY_VERIFIED_SUMMARY.json
+          git commit -m 'N6-2 exact original public coupling Release and financial-support investigation [skip ci]'
+          git push --set-upstream origin n6-2-coupling-original-evidence-staging-20261120
