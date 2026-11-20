@@ -1,0 +1,74 @@
+name: N5 Q1 public four-arm coupled-engine engineering audit (not confirmation)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-q1-four-arm-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-q1-public-bounded-four-arm-pilot
+  cancel-in-progress: false
+jobs:
+  q1_4arm_pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install independent public numerical runtime
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Private data and scientific-source boundary verification
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_q1_four_arm_pilot.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Execute only twelve bounded four-arm engineering cases and zero-friction placebos
+        run: |
+          set -euo pipefail
+          python -m runtime.tasks.n5_q1_four_arm_pilot --out-dir outputs/n5_q1_four_arm_pilot
+      - name: Verify full period stock-flow receipts, limited scope and no scientific overclaim
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv,json
+          from pathlib import Path
+          d=Path('outputs/n5_q1_four_arm_pilot')
+          x=json.loads((d/'q1_batch_status.json').read_text())
+          z=json.loads((d/'q1_rewire_engineering_diagnostics.json').read_text())
+          assert x['paid_stockflow_trajectories']==12
+          assert x['zero_friction_placebo_trajectories']==2
+          assert x['original_economic_anchors_applied']==0
+          assert not x['seller_strength_preserving_rewire_certified']
+          assert not x['eight_anchor_calibration_certified']
+          assert not x['economic_effects_independently_confirmed']
+          assert not x['large_scale_screen_permitted']
+          assert x['full_period_source_ledgers_written']==2
+          assert z['buyer_and_seller_degree_exact']
+          assert z['buyer_value_column_mass_conserved']
+          assert not z['full_degree_and_strength_preserving_control_certified']
+          assert len(list(csv.DictReader((d/'q1_four_arm_period_path.csv').open())))==12*36
+          print('Q1 four-arm engineering evidence PASS; scientific calibration and full screening remain BLOCKED.')
+          PY
+      - name: Durable original public engineering ledger and SHA256 Release
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          (cd outputs/n5_q1_four_arm_pilot && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/archive/sha256_outputs.txt")
+          tar -czf archive/neutral_four_arm_original_ledgers.tar.gz -C outputs/n5_q1_four_arm_pilot .
+          sha256sum public_bundle/n5_v1/m001.json public_bundle/n5_v1/r001.json public_bundle/n5_v1/t001.json > archive/sha256_source_bundle.txt
+          sha256sum runtime/tasks/n5_q1_four_arm_pilot.py > archive/sha256_code.txt
+          git rev-parse HEAD > archive/public_source_commit.txt
+          TAG="n5-public-q1-four-arm-pilot-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" archive/neutral_four_arm_original_ledgers.tar.gz \
+            archive/sha256_outputs.txt archive/sha256_source_bundle.txt \
+            archive/sha256_code.txt archive/public_source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 Q1 public four-arm stock-flow engineering pilot" \
+            --notes "Original 12 matched engineering trajectories, 2 zero-friction controls, degree-only approximate-strength rewire; 0 confirmed economic anchors and 0 independent scientific confirmations. Do not claim Q1 closure."
