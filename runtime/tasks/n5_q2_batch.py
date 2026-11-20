@@ -46,7 +46,7 @@ def selected_by_equations(A,z):
         if len(candidates)==0:continue
         weights=A[candidates,j]
         mass=float(weights.sum())
-        rank=np.argsort(-weights)
+        rank=np.argsort(weights)[::-1]  # frozen equal-value tie policy
         threshold=max(float(np.quantile(weights,qd)),
                       relative*float(weights.max()))
         eligible=[int(x) for x in rank if weights[x]>=threshold]
