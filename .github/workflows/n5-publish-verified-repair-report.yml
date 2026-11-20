@@ -1,0 +1,43 @@
+name: N5 publish exact-release verified engineering contrasts (public only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-publish-verified-repair-report.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-verified-repair-report
+  cancel-in-progress: false
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download immutable public releases and verify original archive SHA256
+        run: |
+          set -euo pipefail
+          mkdir -p staging_n5/forward staging_n5/delivery downloads/forward downloads/delivery
+          gh release download 'n5-public-forward-coverage-44758150356-a1' --repo "$GITHUB_REPOSITORY" --dir downloads/forward
+          gh release download 'n5-public-delivery-channel-44758591721-a1' --repo "$GITHUB_REPOSITORY" --dir downloads/delivery
+          echo "c20951fc66f733e4f28727047c4b6c416cb6cf60329dd3ab2a6b43c8ad186f16  downloads/forward/neutral_forward_coverage_outputs.tar.gz" | sha256sum -c -
+          echo "7cfb88695647ed96b699b71062aad5776c03246e02e3ec948efa74e4d5309d07  downloads/delivery/neutral_delivery_channel.tar.gz" | sha256sum -c -
+          tar -xzf downloads/forward/neutral_forward_coverage_outputs.tar.gz -C staging_n5/forward
+          tar -xzf downloads/delivery/neutral_delivery_channel.tar.gz -C staging_n5/delivery
+          (cd staging_n5/forward && sed 's#^outputs/#./#' ../../downloads/forward/output_sha256.txt | sha256sum -c -)
+          (cd staging_n5/delivery && sed 's#^outputs/#./#' ../../downloads/delivery/sha256_outputs.txt | sha256sum -c -)
+      - name: Produce source-verified original-structure comparisons (no simulations)
+        run: python tools/n5_verified_diagnostic_report.py
+      - name: Commit plain-text evidence summary to public repository
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add reports/n5/N5_ENGINEERING_REPAIR_VERIFIED_2026-11-20.md reports/n5/N5_ENGINEERING_REPAIR_SUMMARY_2026-11-20.json
+          git diff --cached --quiet && exit 0
+          git commit -m 'N5: publish source-hash-verified network mechanism comparisons including null contrasts [skip ci]'
+          git push
