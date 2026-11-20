@@ -1,0 +1,37 @@
+{
+  "schema": "n5_original_network_heterogeneity_exact_public_export_v1",
+  "repository": "ALRIER/On_the_public_impossibilityII",
+  "tag": "n5-public-next-stage-heterogeneity-44763687139-a1",
+  "assets": [
+    {
+      "filename": "n5_original_network_multiseed_robustness.tar.gz",
+      "bytes": 8182,
+      "sha256": "93c62a879eb498b655e16fa0467ee7f7975ddc5d14b8694a90d626d9620e440a"
+    },
+    {
+      "filename": "sha256_outputs.txt",
+      "bytes": 514,
+      "sha256": "13396ad136d7e759889704ae58af6a4e9def0c01454554ba708e1a273b3e727f"
+    },
+    {
+      "filename": "sha256_sources.txt",
+      "bytes": 513,
+      "sha256": "c8638c3091445234303c345abc3861efeb5385e40c392ceb5e0518de169d606d"
+    },
+    {
+      "filename": "source_commit.txt",
+      "bytes": 41,
+      "sha256": "30890ddd51b5c0e7aabfead365683729b691ec5b30a191db89796e92d15aa0d8"
+    }
+  ],
+  "source_snapshots": {
+    "runtime/tasks/n5_next_stage_network_heterogeneity.py": "2f594f867c6a6cd578456c05d8d53f810bbc709594903a7442674d998151a1cb",
+    ".github/workflows/n5-next-stage-heterogeneity.yml": "743125fdef82efecf2f8f79efa9613d6b7d0b901ee278771365a38fd13231d46",
+    "runtime/tasks/n5_clearing_engine.py": "c3ff7c0ade29d50203ab6ba11118bdf24e93fa5ef7713d8fc5f9a300696dcdca"
+  },
+  "archive_file": "n5_next_stage_original_assets.tar.gz",
+  "archive_bytes": 18706,
+  "archive_sha256": "f5a4eeda78c74a1e0c666d83aa2059c1af30bd0f18893dd025977f33388ef2d7",
+  "source_commit": "145d00410de792785a5e18204870d7a657f70a99",
+  "private_actions_executed": false
+}
