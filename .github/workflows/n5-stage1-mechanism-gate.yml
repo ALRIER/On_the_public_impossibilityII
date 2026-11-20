@@ -1,0 +1,59 @@
+name: N5 Stage 1 financial mechanism diagnostic (not scientific certification)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-stage1-mechanism-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-stage1-public-only
+  cancel-in-progress: false
+jobs:
+  synthetic_mechanism_gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install bounded numerical prerequisites
+        run: python -m pip install 'numpy>=1.26,<3'
+      - name: Validate anonymous public boundary
+        run: python tools/validate_public_release.py
+      - name: Check engine-level physical and money identities
+        run: python -m runtime.tasks.n5_clearing_tests
+      - name: Run paired adversarial financial sensitivity and fail-closed anchor audit
+        run: python tools/n5_stage1_mechanism_gate.py
+      - name: Verify diagnostic is not incorrectly promoted to certification
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('outputs/n5_stage1_mechanism_gate/stage1_status.json')
+          s=json.loads(p.read_text())
+          assert s['same_seed_replay_identical']
+          assert s['financial_zero_friction_placebo_identical']
+          assert s['all_periodic_accounting_residuals_lt_1e_minus_9']
+          assert s['original_eight_anchor_adapter_independently_certified'] is False
+          assert s['scientific_stage1_certified'] is False
+          assert s['authorization_for_large_N5_experiments'] is False
+          print('Stage 1 prerequisites audited. Original-anchor certification BLOCKED.')
+          PY
+      - name: Preserve complete diagnostic in an immutable public release
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          sha256sum tools/n5_stage1_mechanism_gate.py runtime/tasks/n5_clearing_engine.py runtime/tasks/n5_clearing_tests.py > archive/source_sha256.txt
+          find outputs/n5_stage1_mechanism_gate -type f -print0 | sort -z | xargs -0 sha256sum > archive/output_sha256.txt
+          git rev-parse HEAD > archive/source_commit.txt
+          tar -czf archive/n5_stage1_diagnostic.tar.gz -C outputs n5_stage1_mechanism_gate
+          tag="n5-public-stage1-mechanism-gate-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" archive/n5_stage1_diagnostic.tar.gz archive/source_sha256.txt archive/output_sha256.txt archive/source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 Stage 1 public synthetic mechanism gate (scientific certification BLOCKED)" \
+            --notes "Public synthetic financial/physical diagnostics only. Frozen eight economic-anchor mapping, macro calibration, historical match, and independent confirmation remain uncertified. No private Actions or full N5 execution."
