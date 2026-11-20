@@ -1,0 +1,66 @@
+name: N6 public transmission bottleneck and identifiability diagnostics
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n6-transmission-gate.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n6-public-transmission-engineering
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numerical prerequisites
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Public leak boundary, original regression and code safety
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_clearing_engine.py runtime/tasks/n6_transmission_diagnostic.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Execute N6 predeclared engineering transmission mechanism trace
+        run: python -m runtime.tasks.n6_transmission_diagnostic
+      - name: Verify no modified targets, false certification, or missing cause-effect receipt
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          j=json.loads(Path('outputs/n6_mechanism_trace/n6_stage1_status.json').read_text())
+          assert j['original_104x104_A_unchanged']
+          assert j['original_q2_six_bands_unchanged']
+          assert j['original_full_ledger_trajectories']==96
+          assert j['original_monthly_trace_rows']==1152
+          assert j['matched_network_shock_contrasts']==32
+          assert j['maximum_goods_and_money_conservation_residual']<1e-9
+          assert j['read_only_trace_does_not_modify_outputs']
+          assert j['no_friction_placebo_pass']
+          assert j['original_10_parameter_8_anchor_parity_certified'] is False
+          assert j['large_scale_ML_ABM_optimization_authorized'] is False
+          print("N6-1 engineering diagnostic PASS; scientific N6-R1..R5 closure remains BLOCKED.")
+          PY
+      - name: Preserve every period, including null and adverse findings, as immutable public release
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          sha256sum runtime/tasks/n5_clearing_engine.py runtime/tasks/n6_transmission_diagnostic.py runtime/tasks/n5_review_proofs.py public_bundle/n5_v1/m001.json public_bundle/n5_v1/t001.json > archive/source_sha256.txt
+          (find outputs/n6_mechanism_trace -type f -print0 2>/dev/null || true) | sort -z | xargs -0 -r sha256sum > archive/output_sha256.txt
+          git rev-parse HEAD > archive/source_commit.txt
+          tar -czf archive/n6_mechanism_trace.tar.gz -C outputs .
+          tag="n6-public-mechanism-trace-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" archive/n6_mechanism_trace.tar.gz archive/source_sha256.txt archive/output_sha256.txt archive/source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" --title "N6 public 104-sector physical/payment bottleneck trace (engineering only)" \
+            --notes "All 96 original A trajectories, 1152 monthly traces and 32 paired comparisons; original Q2 bands; falsification; original 8x10 economic anchor certification NOT established; no private Actions."
