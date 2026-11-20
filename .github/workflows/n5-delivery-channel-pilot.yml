@@ -1,0 +1,59 @@
+name: N5 104-sector real delivery shock and topology falsification (public-only)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-delivery-channel-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-delivery-channel-physical-public
+  cancel-in-progress: false
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Numerical dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Verify original boundary and backwards compatible engine
+        run: |
+          python tools/validate_public_release.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Execute original 104-sector delivery-shock multiverse
+        run: python -m runtime.tasks.n5_delivery_channel_pilot
+      - name: Guard scientific publication claims
+        if: success()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          x=json.loads(Path('outputs/n5_delivery_channel_pilot/status.json').read_text())
+          assert x['all_periodic_conservation_pass']
+          assert x['zero_financial_friction_network_placebo_pass']
+          assert x['legacy_10_parameter_anchors_mapped'] is False
+          assert x['q1_scientific_certification'] is False
+          assert x['large_scale_ml_search_authorized'] is False
+          print('Mechanism diagnostic complete; no economic certification.')
+          PY
+      - name: Persist immutable complete evidence, including failures
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          sha256sum runtime/tasks/n5_clearing_engine.py runtime/tasks/n5_delivery_channel_pilot.py public_bundle/n5_v1/m001.json > archive/sha256_sources.txt
+          (find outputs/n5_delivery_channel_pilot -type f -print0 2>/dev/null || true) | sort -z | xargs -0 -r sha256sum > archive/sha256_outputs.txt
+          git rev-parse HEAD > archive/public_source_commit.txt
+          tar -czf archive/neutral_delivery_channel.tar.gz -C outputs .
+          tag="n5-public-delivery-channel-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$tag" archive/neutral_delivery_channel.tar.gz archive/sha256_sources.txt archive/sha256_outputs.txt archive/public_source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 104 sector delivery shock mechanism and falsification gate" \
+            --notes "Prospective engineering-only investigation, includes all null and nonadmissible controls. Original 10-parameter ABM mapping and Q1 closure not established. No private Actions."
