@@ -87,7 +87,8 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         inventory_months=2.0,credit_fraction=1.2,
         wage_fraction=.22,investment_fraction=0.0,
         labor_speed=.25,full_ledger=False,
-        order_policy="legacy_stock_only",shock_channel="capacity"):
+        order_policy="legacy_stock_only",shock_channel="capacity",
+        trace_mechanism=False):
     A=np.asarray(A,float)
     P=np.asarray(P,float)
     n=len(A)
@@ -99,6 +100,8 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
     check(order_policy in ("legacy_stock_only","forward_input_coverage"),
           "Unknown input ordering policy")
     check(0<=shock_severity<=1 and 0<=shock_source<n and periods>0,"Invalid shock")
+    check(not trace_mechanism or full_ledger,
+          "N6 mechanism trace requires full ledger")
     x,f=equilibrium(A)
     s=init_state(A,x,inventory_months)
     initial_money=float(np.sum(s.firm_cash)+s.household_cash+s.bank_cash)
@@ -120,6 +123,11 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         feasible=np.divide(s.inputs,A,out=np.full_like(A,np.inf),where=A>0)
         material_bound=np.min(feasible,axis=0)
         q=np.minimum.reduce([planned,capacity,material_bound])
+        if trace_mechanism:
+            n6_input_limited_count=int(np.sum((material_bound<planned-1e-12)&
+                (material_bound<capacity-1e-12)))
+            n6_input_limited_gap=float(np.sum(np.maximum(
+                np.minimum(planned,capacity)-q,0)))
         check(np.all(q>=0),"Negative production")
         consumed=A*q[None,:]
         s.inputs-=consumed
@@ -128,6 +136,16 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         s.goods+=q
         bill=np.zeros((n,n),float);shipments=np.zeros((n,n),float)
         unpaid=0.0;unfilled_physical=0.0
+        if trace_mechanism:
+            n6={"ordered":0.0,"available_before_shock":0.0,
+                "seller_goods_shortfall":0.0,"shock_withheld":0.0,
+                "route_denied":0.0,"credit_requested":0.0,
+                "credit_granted":0.0,"cash_shortfall":0.0,
+                "payment_edge_capacity_shortfall":0.0,
+                "settled_deliveries":0.0,"orders_count":0,
+                "disallowed_routes_count":0,
+                "input_limited_sectors":n6_input_limited_count,
+                "input_limited_production_gap":n6_input_limited_gap}
         # Frozen buyer loop and seller order avoid randomness in settlement order.
         # Purchases replenish input stock for the next monthly production.
         # Existing N5 runs retain the exact legacy ordering rule by default.
@@ -144,6 +162,11 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
                 order=float(requests[i,j])
                 if order<=0:continue
                 quantity=min(order,max(float(s.goods[i]),0))
+                if trace_mechanism:
+                    n6["orders_count"]+=1
+                    n6["ordered"]+=order
+                    n6["available_before_shock"]+=quantity
+                    n6["seller_goods_shortfall"]+=order-quantity
                 if quantity<order:unfilled_physical+=order-quantity
                 # Prospective delivery-interruption shock: the seller retains
                 # any undelivered real goods. Nothing is created or destroyed.
@@ -154,18 +177,30 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
                     withheld=quantity*shock_severity
                     quantity-=withheld
                     unfilled_physical+=withheld
+                    if trace_mechanism:n6["shock_withheld"]+=withheld
                 if quantity<=0:continue
                 permit,fee=allowed(P,i,j,mode,hop_policy)
                 if not permit:
+                    if trace_mechanism:
+                        n6["route_denied"]+=quantity
+                        n6["disallowed_routes_count"]+=1
                     unpaid+=quantity
                     continue
                 # Credit/payment access affects **settled shipments**, not
                 # technological A, output q or labor directly.
                 budget=float(s.firm_cash[j])
                 if budget<quantity*(1+fee):
+                    if trace_mechanism:
+                        n6["credit_requested"]+=quantity*(1+fee)-budget
+                        before_loan=float(s.firm_loan[j])
                     borrow(s,j,quantity*(1+fee)-budget,
                            max(float(x[j])*credit_fraction,0),mode)
+                    if trace_mechanism:
+                        n6["credit_granted"]+=float(s.firm_loan[j])-before_loan
                 settled=min(quantity,max(float(s.firm_cash[j]),0)/(1+fee))
+                if trace_mechanism:
+                    n6["cash_shortfall"]+=max(quantity-settled,0.0)
+                    n6_pre_capacity_settlement=settled
                 if mode!="zero_frictions" and payment_capacity_scale<np.inf:
                     # Payment-routing capacity depends on a fixed *ex ante*
                     # financial edge, never on the output. No physical unit is
@@ -173,6 +208,9 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
                     limit=(payment_capacity_scale*max(x[j],1e-12)*
                            float(P[i,j]/max(np.sum(P[:,j]),1e-12)))
                     if P[i,j]>0:settled=min(settled,limit)
+                if trace_mechanism:
+                    n6["payment_edge_capacity_shortfall"]+=max(
+                        n6_pre_capacity_settlement-settled,0.0)
                 if settled<=0:
                     unpaid+=quantity
                     continue
@@ -182,6 +220,7 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
                 s.inputs[i,j]+=settled
                 bill[i,j]+=settled
                 shipments[i,j]+=settled
+                if trace_mechanism:n6["settled_deliveries"]+=settled
                 unpaid+=max(quantity-settled,0)
         # Wage transfer is financed by actual output, with explicitly booked
         # bank credit as the only source for unfunded payroll.
@@ -241,7 +280,7 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         check(all(np.isfinite(float(v)) for v in y.values()),"Nonfinite outcomes")
         path.append(y)
         if full_ledger:
-            ledgers.append({
+            ledger_row={
                 "M":t,
                 "Q":q.tolist(),
                 "C":consumed.tolist(),
@@ -255,7 +294,19 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
                 "BANK_CASH":s.bank_cash,
                 "BANK_LOANS":s.firm_loan.tolist(),
                 "LABOR":s.workforce.tolist()
-            })
+            }
+            if trace_mechanism:
+                n6["settlement_gap"]=n6["ordered"]-n6["settled_deliveries"]
+                n6["explained_gap"]=(n6["seller_goods_shortfall"]+
+                    n6["shock_withheld"]+n6["route_denied"]+
+                    n6["cash_shortfall"]+
+                    n6["payment_edge_capacity_shortfall"])
+                check(abs(n6["settlement_gap"]-n6["explained_gap"])<1e-8,
+                      "N6 channel-level order-to-settlement identity failed")
+                check(abs(n6["settled_deliveries"]-float(np.sum(shipments)))<1e-9,
+                      "N6 trace settlement does not match bilateral ledger")
+                ledger_row["N6_TRACE"]=n6
+            ledgers.append(ledger_row)
     return {"path":path,"ledger":ledgers}
 
 def diff_in_diff(paths):
