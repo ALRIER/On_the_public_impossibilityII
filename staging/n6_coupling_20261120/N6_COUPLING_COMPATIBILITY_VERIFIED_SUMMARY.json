@@ -1,0 +1,143 @@
+{
+  "schema": "n6_coupling_source_verified_report_v1",
+  "source_tag": "n6-public-coupling-compatibility-44821050420-a1",
+  "original_release_archive_sha256": "c547a93a772f1bc0ab7f4feca38f9650a21edbece341ca7e7385db992369c067",
+  "status": {
+    "8_anchor_legacy_transition_compatibility_confirmed": false,
+    "8_original_frozen_anchors_present": 8,
+    "authorization_for_economic_ml_search": false,
+    "by_route": {
+      "direct": {
+        "cases": 24,
+        "engineering_reference_90pct_cases": 0,
+        "output_fraction_late_max": 0.005580747814794362,
+        "output_fraction_late_mean": 0.005580062153471424,
+        "output_fraction_late_min": 0.005579376492148486
+      },
+      "two_hop": {
+        "cases": 24,
+        "engineering_reference_90pct_cases": 0,
+        "output_fraction_late_max": 0.005580747814794362,
+        "output_fraction_late_mean": 0.005580062153471424,
+        "output_fraction_late_min": 0.005579376492148486
+      },
+      "unrestricted_payment_placebo": {
+        "cases": 24,
+        "engineering_reference_90pct_cases": 12,
+        "output_fraction_late_max": 0.9979662862615717,
+        "output_fraction_late_mean": 0.5017264482626659,
+        "output_fraction_late_min": 0.005579376492148486
+      }
+    },
+    "capacity_limited_dynamic_cases": 48,
+    "engineering_reference_output_below_90pct_cases": 60,
+    "evidence_input_sha256": {
+      "m001.json": "880f565e47b3b4e7b8f36060109fe2359f84f6412010f05598234bd9ca2e88e0",
+      "r001.json": "27ebb7e2f70a06419aa047c494835c8ce87bd6bc52c37775d7223088d0373137",
+      "t001.json": "f29f8af23198df44b57851c0815ac254a978817eb4eb2af9aae3312ed56a1289"
+    },
+    "genuine_original_moments_simulated_in_this_public_run": 0,
+    "max_goods_inputs_money_residual": 5.3290705182007514e-14,
+    "monthly_output_paths": 1296,
+    "new_coupling_compatible_with_old_test3": false,
+    "new_coupling_explicit_legacy_anchor_adapter_detected": false,
+    "next_development_action": "First implement a source-faithful Test3-to-new-ledger adapter, and a financially feasible no-shock input settlement baseline; do NOT tune Q2 bands or old original calibration.",
+    "no_frictions_placebo_pairs_checked": 8,
+    "no_shock_public_engineering_cases": 72,
+    "note": "No-shock 90% output is an engineering diagnostic, NOT a new scientific calibration target or an old Test3 acceptance rule.",
+    "old_test3_recognition": "Already validated, no old model calibration run",
+    "old_test3_validation_preserved": true,
+    "only_new_coupling_is_under_test": true,
+    "original_104sector_technological_A_unchanged": true,
+    "original_1995_2023_year_reference_unchanged": true,
+    "original_Q2_six_acceptance_bands_unchanged": true,
+    "original_Q4_historical_failures_changed": false,
+    "route_static_cases": 36,
+    "schema": "n6_new_coupling_vs_old_test3_compatibility_preflight_v1",
+    "scientific_certification_succeeded": false
+  },
+  "predeclared_static_support_table": [
+    {
+      "route": "direct",
+      "arm": "inherited",
+      "missing_technology_edges": 0,
+      "buyers_with_missing_route": 0,
+      "buyers_with_undersupplied_input": 103,
+      "direct_capacity_shortfall_edges": 8274,
+      "eligible_technology_mass_fraction": 1.0
+    },
+    {
+      "route": "direct",
+      "arm": "reconstructed_00",
+      "missing_technology_edges": 1548,
+      "buyers_with_missing_route": 103,
+      "buyers_with_undersupplied_input": 103,
+      "direct_capacity_shortfall_edges": 4334,
+      "eligible_technology_mass_fraction": 0.9986369032310491
+    },
+    {
+      "route": "direct",
+      "arm": "reconstructed_31",
+      "missing_technology_edges": 1474,
+      "buyers_with_missing_route": 103,
+      "buyers_with_undersupplied_input": 103,
+      "direct_capacity_shortfall_edges": 4607,
+      "eligible_technology_mass_fraction": 0.9987277808184712
+    },
+    {
+      "route": "two_hop",
+      "arm": "inherited",
+      "missing_technology_edges": 0,
+      "buyers_with_missing_route": 0,
+      "buyers_with_undersupplied_input": 103,
+      "direct_capacity_shortfall_edges": 8274,
+      "eligible_technology_mass_fraction": 1.0
+    },
+    {
+      "route": "two_hop",
+      "arm": "reconstructed_00",
+      "missing_technology_edges": 81,
+      "buyers_with_missing_route": 74,
+      "buyers_with_undersupplied_input": 103,
+      "direct_capacity_shortfall_edges": 4334,
+      "eligible_technology_mass_fraction": 0.9999989255804782
+    },
+    {
+      "route": "two_hop",
+      "arm": "reconstructed_31",
+      "missing_technology_edges": 78,
+      "buyers_with_missing_route": 74,
+      "buyers_with_undersupplied_input": 103,
+      "direct_capacity_shortfall_edges": 4607,
+      "eligible_technology_mass_fraction": 0.9999994391560851
+    },
+    {
+      "route": "unrestricted_payment_placebo",
+      "arm": "inherited",
+      "missing_technology_edges": 0,
+      "buyers_with_missing_route": 0,
+      "buyers_with_undersupplied_input": 0,
+      "direct_capacity_shortfall_edges": 0,
+      "eligible_technology_mass_fraction": 1.0
+    },
+    {
+      "route": "unrestricted_payment_placebo",
+      "arm": "reconstructed_00",
+      "missing_technology_edges": 0,
+      "buyers_with_missing_route": 0,
+      "buyers_with_undersupplied_input": 0,
+      "direct_capacity_shortfall_edges": 0,
+      "eligible_technology_mass_fraction": 1.0
+    },
+    {
+      "route": "unrestricted_payment_placebo",
+      "arm": "reconstructed_31",
+      "missing_technology_edges": 0,
+      "buyers_with_missing_route": 0,
+      "buyers_with_undersupplied_input": 0,
+      "direct_capacity_shortfall_edges": 0,
+      "eligible_technology_mass_fraction": 1.0
+    }
+  ],
+  "new_coupling_parity_certified": false
+}

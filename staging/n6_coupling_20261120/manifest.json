@@ -1,0 +1,37 @@
+{
+  "schema": "n6_original_coupling_compatibility_evidence_v1",
+  "original_repository": "ALRIER/On_the_public_impossibilityII",
+  "original_tag": "n6-public-coupling-compatibility-44821050420-a1",
+  "original_assets": [
+    {
+      "name": "n6_coupling_compatibility.tar.gz",
+      "size": 23218,
+      "sha256": "0ff426fd985539d74b20a4935ebfc84b5c913d29a608671925e188308be012a5"
+    },
+    {
+      "name": "output_sha256.txt",
+      "size": 689,
+      "sha256": "e9d89d8a31e1ea214585b26b0032ae3f9007724123ebd6466be89fdde1897a34"
+    },
+    {
+      "name": "source_commit.txt",
+      "size": 41,
+      "sha256": "f7979ee56908795c4ee71ad92518b143e88f4fae5550329b863a7ff0b3f6e3ff"
+    },
+    {
+      "name": "source_sha256.txt",
+      "size": 504,
+      "sha256": "33578b18b5c98a68d1474986198b8bfc6a3a42827513a04a7e06e0d87b97d974"
+    }
+  ],
+  "source_snapshots": {
+    "runtime/tasks/n5_clearing_engine.py": "074adc3e575c972f2ebaa0242c27b30624c8aabd24d00a0f3e5341891eee1eba",
+    "runtime/tasks/n6_coupling_compatibility_gate.py": "5511f40750ab53646f6ab6086d022689138dadd72c5e693350e4c418c9bc3b59",
+    ".github/workflows/n6-new-coupling-compatibility.yml": "986594b67ba2754dc456eb71c8042be0c9301aad84ae53a386416f2e8eece622"
+  },
+  "archive_file": "n6_original_coupling_compatibility_release.tar.gz",
+  "archive_bytes": 36173,
+  "archive_sha256": "c547a93a772f1bc0ab7f4feca38f9650a21edbece341ca7e7385db992369c067",
+  "source_commit": "a7d62a33d7307dc9615b84d0e3b81249eca6f802",
+  "no_private_actions_executed": true
+}
