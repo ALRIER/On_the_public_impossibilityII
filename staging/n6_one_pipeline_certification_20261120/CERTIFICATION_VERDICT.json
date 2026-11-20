@@ -1,0 +1,73 @@
+{
+  "schema": "n6_test3_single_pipeline_scientific_certification_v1",
+  "scientific_decision": "NO",
+  "certified": false,
+  "original_test3_certification_preserved": true,
+  "new_coupling_is_the_only_thing_under_review": true,
+  "source_commit_required": true,
+  "public_input_sha256": {
+    "m001.json": "880f565e47b3b4e7b8f36060109fe2359f84f6412010f05598234bd9ca2e88e0",
+    "t001.json": "f29f8af23198df44b57851c0815ac254a978817eb4eb2af9aae3312ed56a1289",
+    "r001.json": "27ebb7e2f70a06419aa047c494835c8ce87bd6bc52c37775d7223088d0373137"
+  },
+  "old_test3_8_anchor_original_vectors_frozen": true,
+  "old_test3_recertification_performed": false,
+  "new_coupling_8_anchor_scientific_pairwise_pass_count": 0,
+  "new_coupling_no_shock_simulations": 72,
+  "new_coupling_no_shock_below_illustrative_90pct": 60,
+  "preserved_Q2_six_bands": true,
+  "preserved_original_Q4_failures": true,
+  "mechanical_accounting_passed": true,
+  "checks": [
+    {
+      "id": "C1",
+      "name": "Frozen public A, 8 anchors, 32 original structures and six Q2 bands",
+      "passed": true,
+      "scientific_scope": "input provenance only"
+    },
+    {
+      "id": "C2",
+      "name": "Double-entry cash and goods, and no-friction topology placebo",
+      "passed": true,
+      "scientific_scope": "engineering only"
+    },
+    {
+      "id": "C3",
+      "name": "No-shock baseline sustainable under predeclared routed regimes",
+      "passed": false,
+      "observed_failing_cases": 60,
+      "cases": 72,
+      "scientific_scope": "90% illustrative engineering indicator, not original target"
+    },
+    {
+      "id": "C4",
+      "name": "New coupling actually executes original ten economic state transitions",
+      "passed": false,
+      "scientific_scope": "requires original certified Test3 source integration"
+    },
+    {
+      "id": "C5",
+      "name": "All eight Test3 anchors pass genuine paired economic-moment parity",
+      "passed": false,
+      "verified_original_anchors": 0,
+      "scientific_scope": "not the eight numeric hashes or frozen reference vectors"
+    },
+    {
+      "id": "C6",
+      "name": "Independent confirmation with unchanged history and fresh economic seeds",
+      "passed": false,
+      "scientific_scope": "not run: new coupling has no source-faithful paired model"
+    }
+  ],
+  "blocking_conditions": [
+    "C3: No-shock baseline sustainable under predeclared routed regimes",
+    "C4: New coupling actually executes original ten economic state transitions",
+    "C5: All eight Test3 anchors pass genuine paired economic-moment parity",
+    "C6: Independent confirmation with unchanged history and fresh economic seeds"
+  ],
+  "full_economic_ML_optimization_authorized": false,
+  "n6_3_scientific_confirmation_authorized": false,
+  "no_automatic_historical_acceptance_rewriting": true,
+  "next_exact_action": "Insert an opt-in financially funded bilateral payment/delivery module inside the existing certified Test3 N4 integration seam, preserve all ten old economic state equations and historical calibration, run eight paired original-vs-coupled anchors in a trusted independent environment, and require feasible no-shock production with fresh seeds. The private source/data must never be published in this public worker.",
+  "interpretation": "An NO is an actual negative certification decision for the NEW kernel, not a failure of old Test3."
+}

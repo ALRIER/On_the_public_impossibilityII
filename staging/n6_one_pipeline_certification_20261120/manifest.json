@@ -1,0 +1,50 @@
+{
+  "schema": "n6_one_pipeline_original_evidence_exact_bytes_v1",
+  "original_repository": "ALRIER/On_the_public_impossibilityII",
+  "original_tag": "n6-public-one-pipeline-certification-44823053429-a1",
+  "original_workflow_run": 44823053429,
+  "original_assets": [
+    {
+      "name": "CERTIFICATION_REPORT.md",
+      "bytes": 1926,
+      "sha256": "e50da0a6cfa0b8df746c8a09b2c0c6816d6bcf7ef2d5c61d45a82a60b5ddd8e4"
+    },
+    {
+      "name": "CERTIFICATION_VERDICT.json",
+      "bytes": 3373,
+      "sha256": "a42e9347d9e89ee903603e5d6619f897aeeadf7b3ce3ace040a42ebf9f38925e"
+    },
+    {
+      "name": "n6_one_pipeline_certification.tar.gz",
+      "bytes": 26029,
+      "sha256": "20c06cbdf38ae57af6bc25454eb6a686afde61c3ed1c113ea66408fe03f24d7a"
+    },
+    {
+      "name": "output_sha256.txt",
+      "bytes": 1171,
+      "sha256": "ff2102305408a9b98cdf8b911d384a64562b1f82722ba712899b71a397fae975"
+    },
+    {
+      "name": "source_commit.txt",
+      "bytes": 41,
+      "sha256": "fdba445b301316d72b57db914851ab544e143a734b6d68c7b9fbe9597ed4a90e"
+    },
+    {
+      "name": "source_sha256.txt",
+      "bytes": 620,
+      "sha256": "fe2dc47990c158ac1aa7a93c721b63846e81338e821d25bd13da3ed67ff55331"
+    }
+  ],
+  "source_snapshots": {
+    "runtime/tasks/n6_single_pipeline_certification.py": "30b19917ef0d357e2adc3ef5964f043d1d544f5a014910f70a16eb508196feec",
+    "runtime/tasks/n6_coupling_compatibility_gate.py": "5511f40750ab53646f6ab6086d022689138dadd72c5e693350e4c418c9bc3b59",
+    "runtime/tasks/n5_clearing_engine.py": "074adc3e575c972f2ebaa0242c27b30624c8aabd24d00a0f3e5341891eee1eba",
+    ".github/workflows/n6-one-pipeline-scientific-certification.yml": "0784befc516be39d260abdc22cbd369ede0869261929ad22d984565d9a6b159f"
+  },
+  "archive_name": "n6_one_pipeline_original_release_and_sources.tar.gz",
+  "archive_sha256": "3776563216d0da4c194cbdf2a1a39ed0c82b19f461c958286b942106a3e07d67",
+  "archive_bytes": 45236,
+  "scientific_certification_decision": "NO",
+  "public_commit": "5bfdb6274e0ad201ef292a582e960ed4daeef1bc",
+  "no_private_actions_run": true
+}
