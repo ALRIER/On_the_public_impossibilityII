@@ -1,0 +1,77 @@
+name: N5 public ML surrogate guided networks - sealed test and fresh ABM pilot
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-ml-guided-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-ml-guided-pilot
+  cancel-in-progress: false
+jobs:
+  ml_surrogate_and_abm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    env:
+      GH_TOKEN: ${{ github.token }}
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+    steps:
+      - name: Checkout public numerical source only
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install reproducible public numerical dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2' 'scikit-learn>=1.5,<2'
+      - name: Validate neutral public release and original numerical engineering unit tests
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_ml_guided_pilot.py
+          python -m runtime.tasks.n5_clearing_tests
+      - name: Fit surrogate only on 24 original structures then test 8 sealed and 16 fresh seed cases
+        run: |
+          set -euo pipefail
+          python -m runtime.tasks.n5_ml_guided_pilot --out-dir outputs/n5_ml_surrogate_pilot
+      - name: Enforce sealed holdout, original-target preservation, public-only scope
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv,json
+          from pathlib import Path
+          d=Path("outputs/n5_ml_surrogate_pilot")
+          x=json.loads((d/"ml_pilot_status.json").read_text())
+          assert x["original_network_training_structures"]==24
+          assert x["sealed_original_heldout_structures"]==8
+          assert x["candidate_design_sobol_count"]==128
+          assert x["fresh_seed_candidate_comparisons"]==16
+          assert x["original_economic_anchors_applied"]==0
+          assert x["original_n3_historical_case_results_edited"] is False
+          assert x["original_development_target_thresholds_altered"] is False
+          assert x["n5_q1_scientific_closure"] is False
+          assert x["n5_q3_macro_model_validation_complete"] is False
+          assert x["n5_q4_development_targets_improved_in_original_model"] is False
+          assert x["full_n5_simulation_unlocked"] is False
+          assert len(list(csv.DictReader((d/"ml_sealed_prediction_holdout.csv").open())))==8
+          print("ML pilot evidence valid; no independent scientific N5 closure claimed.")
+          PY
+      - name: Save complete public original trial and SHA256 receipts to Release
+        run: |
+          set -euo pipefail
+          mkdir -p archive
+          (cd outputs/n5_ml_surrogate_pilot && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/archive/sha256_outputs.txt")
+          tar -czf archive/neutral_surrogate_and_fresh_abm.tar.gz -C outputs/n5_ml_surrogate_pilot .
+          sha256sum public_bundle/n5_v1/m001.json public_bundle/n5_v1/t001.json > archive/sha256_sources.txt
+          sha256sum runtime/tasks/n5_ml_guided_pilot.py > archive/sha256_code.txt
+          git rev-parse HEAD > archive/public_source_commit.txt
+          TAG="n5-public-ml-guided-pilot-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" archive/neutral_surrogate_and_fresh_abm.tar.gz \
+            archive/sha256_outputs.txt archive/sha256_sources.txt \
+            archive/sha256_code.txt archive/public_source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 ML-guided public Q1-Q2 exploratory network design" \
+            --notes "ML search trained on 24 original network structures; 8 completely sealed network test structures, 128 prospective candidate controls, and fresh common-seed ABM paired economic tests. Exploratory, not full calibrated N5 scientific confirmation. No private Actions."
