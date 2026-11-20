@@ -1,0 +1,110 @@
+name: N5 reviewer Q2-Q4 public analytical batch - original evidence only
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/n5-q2-q3-q4-batch.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: n5-public-reviewer-analytical-batch
+  cancel-in-progress: false
+jobs:
+  historical_analysis:
+    name: N5 public original ${{ matrix.track }} evidence analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 85
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        track: [q2, q3, q4]
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout neutral public repository only
+        uses: actions/checkout@v4
+      - name: Python numerical runtime
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install public numerical dependencies
+        run: python -m pip install 'numpy>=1.26,<3' 'scipy>=1.13,<2'
+      - name: Hard public data release boundary; original syntax and provenance
+        run: |
+          set -euo pipefail
+          python tools/validate_public_release.py
+          python -m py_compile runtime/tasks/n5_q2_batch.py runtime/tasks/n5_q3_batch.py runtime/tasks/n5_q4_batch.py
+      - name: Download SHA-verifiable original N3 recovered public evidence
+        if: matrix.track == 'q4'
+        run: |
+          set -euo pipefail
+          mkdir -p n5_source
+          gh release download n5-n3-public-source-probe-r1-44627702757-a1 \
+            --repo "$GITHUB_REPOSITORY" \
+            --dir n5_source \
+            --pattern o402.csv --pattern o403.csv --pattern o404.json
+          test -s n5_source/o402.csv
+          test -s n5_source/o403.csv
+          test -s n5_source/o404.json
+      - name: Execute one original public numerical research track (never private simulation)
+        run: |
+          set -euo pipefail
+          case "${{ matrix.track }}" in
+            q2) python -m runtime.tasks.n5_q2_batch --out-dir outputs/n5_q2_batch;;
+            q3) python -m runtime.tasks.n5_q3_batch --out-dir outputs/n5_q3_batch;;
+            q4) python -m runtime.tasks.n5_q4_batch --source-dir n5_source --out-dir outputs/n5_q4_batch;;
+            *) exit 1;;
+          esac
+      - name: Independently check report scope and no unsupported claims
+        run: |
+          set -euo pipefail
+          TRACK="${{ matrix.track }}" python - <<'PY'
+          import json,os
+          from pathlib import Path
+          track=os.environ['TRACK']
+          path=Path(f'outputs/n5_{track}_batch/{track}_batch_status.json')
+          status=json.loads(path.read_text())
+          assert status['scientific_simulations']==0
+          if track=='q2':
+              assert status['network_structures']==32
+              assert status['structural_diagnostic_rows']==192
+              assert status['structural_diagnostics_in_frozen_bands']==192
+              assert not status['source_code_line_by_line_independently_certified']
+          elif track=='q3':
+              assert status['full_reference_countries']==146
+              assert status['independent_external_reference_countries']==36
+              assert status['reference_window_count']==6
+              assert not status['model_period_matched_timeseries_available']
+          else:
+              assert status['original_case_target_rows']==1536
+              assert status['original_failed_targets']==6
+              assert status['material_target_band_changes']==3
+              assert not status['source_registry_chronology_reason_independently_proven']
+          print(f'Public N5 {track} original evidence verified; reviewer completion not asserted.')
+          PY
+      - name: Publish versioned immutable public Release with original output SHA256
+        run: |
+          set -euo pipefail
+          TRACK="${{ matrix.track }}"
+          FOLDER="outputs/n5_${TRACK}_batch"
+          mkdir -p archive
+          (cd "$FOLDER" && find . -type f -print0 | sort -z | xargs -0 sha256sum > "$GITHUB_WORKSPACE/archive/sha256_outputs.txt")
+          tar -cf archive/neutral_reviewer_results.tar -C "$FOLDER" .
+          sha256sum public_bundle/n5_v1/m001.json public_bundle/n5_v1/r001.json public_bundle/n5_v1/t001.json public_bundle/n5_v1/manifest.json > archive/sha256_source_bundle.txt
+          sha256sum runtime/tasks/n5_${TRACK}_batch.py > archive/sha256_analysis_code.txt
+          if [[ "$TRACK" == "q4" ]]; then
+            (cd n5_source && sha256sum o402.csv o403.csv o404.json > "$GITHUB_WORKSPACE/archive/sha256_original_n3_assets.txt")
+          else
+            printf 'No external recovered N3 assets used by this track.\n' > archive/sha256_original_n3_assets.txt
+          fi
+          git rev-parse HEAD > archive/public_source_commit.txt
+          TAG="n5-public-${TRACK}-batch-r1-${GITHUB_RUN_ID}-a${GITHUB_RUN_ATTEMPT}"
+          gh release create "$TAG" \
+            archive/neutral_reviewer_results.tar archive/sha256_outputs.txt \
+            archive/sha256_source_bundle.txt archive/sha256_analysis_code.txt \
+            archive/sha256_original_n3_assets.txt archive/public_source_commit.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "N5 neutral reviewer analytical evidence ${TRACK}" \
+            --notes "Numerical Q2/Q3/Q4 original-source analysis on PUBLIC GitHub Actions only. No economic simulation or private checkout. Not scientific reviewer closure; original N3 failures and calibration blockers remain unchanged."
