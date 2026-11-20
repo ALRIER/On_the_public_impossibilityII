@@ -86,7 +86,8 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         hop_policy="direct",payment_capacity_scale=2.0,
         inventory_months=2.0,credit_fraction=1.2,
         wage_fraction=.22,investment_fraction=0.0,
-        labor_speed=.25,full_ledger=False):
+        labor_speed=.25,full_ledger=False,
+        order_policy="legacy_stock_only"):
     A=np.asarray(A,float)
     P=np.asarray(P,float)
     n=len(A)
@@ -94,6 +95,8 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
           "Nonconforming financial matrix")
     check(mode in ("base","zero_frictions"),"Unknown immutable financial regime")
     check(hop_policy in ("direct","two_hop"),"Unknown route policy")
+    check(order_policy in ("legacy_stock_only","forward_input_coverage"),
+          "Unknown input ordering policy")
     check(0<=shock_severity<=1 and 0<=shock_source<n and periods>0,"Invalid shock")
     x,f=equilibrium(A)
     s=init_state(A,x,inventory_months)
@@ -126,7 +129,15 @@ def run(A,P,*,seed,periods=48,shock_start=12,shock_length=6,
         unpaid=0.0;unfilled_physical=0.0
         # Frozen buyer loop and seller order avoid randomness in settlement order.
         # Purchases replenish input stock for the next monthly production.
-        requests=np.maximum(A*(x[None,:]*inventory_months)-s.inputs,0)
+        # Existing N5 runs retain the exact legacy ordering rule by default.
+        # The new prospective forward-coverage alternative orders the next
+        # period's technological requirements PLUS a separate desired safety
+        # buffer. This is physical base-stock planning, not a direct payment-
+        # topology coefficient; any constraints arise from actual shipment
+        # availability, routing permission, and cash/credit settlement.
+        desired_months = (inventory_months if order_policy=="legacy_stock_only"
+                          else 1.0+inventory_months)
+        requests=np.maximum(A*(x[None,:]*desired_months)-s.inputs,0)
         for i in range(n):
             for j in range(n):
                 order=float(requests[i,j])
